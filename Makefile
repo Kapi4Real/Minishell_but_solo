@@ -3,7 +3,8 @@ CC = cc
 CFLAGS = -Wall -Wextra -Werror -g -I.
 RM = rm -f
 
-SRC = src/main.c src/parsing/split_command.c src/exec/exec_builtins.c builtins/builts.c
+SRC = src/main.c src/parsing/split_command.c src/exec/exec_builtins.c builtins/builts.c src/exec/init_env.c src/parsing/init_cmd.c src/parsing/remove_quotes.c src/parsing/add_arg_cmd.c src/parsing/free_cmd.c src/exec/get_cmd_path.c src/exec/get_env.c 
+
 OBJ = $(SRC:.c=.o)
 
 LIBFT_DIR = lib/libft

@@ -46,8 +46,8 @@ static void	handle_outside(t_tokenizer *tk)
 			tk->state = IN_SINGLE_QUOTES;
 			tk->pos_input++;
 		}
-		else if (tk->input[tk->pos_input] == ' ' ||
-			tk->input[tk->pos_input] == '\t')
+		else if (tk->input[tk->pos_input] == ' '
+			|| tk->input[tk->pos_input] == '\t')
 		{
 			create_token(tk);
 			tk->pos_input++;
@@ -69,10 +69,10 @@ static void	handle_double_quotes(t_tokenizer *tk)
 		{
 			tk->state = OUTSIDE;
 			tk->pos_input++;
-			tk->buffer[tk->pos_buffer] = '\0';
-			tk->pos_buffer = 0;
-			tk->tab[tk->pos_tab] = strdup(tk->buffer);
-			tk->pos_tab++;
+		}
+		else if (tk->input[tk->pos_input] == '\0')
+		{
+			tk->state = OUTSIDE;
 		}
 		else
 		{
@@ -91,10 +91,10 @@ static void	handle_single_quotes(t_tokenizer *tk)
 		{
 			tk->state = OUTSIDE;
 			tk->pos_input++;
-			tk->buffer[tk->pos_buffer] = '\0';
-			tk->pos_buffer = 0;
-			tk->tab[tk->pos_tab] = strdup(tk->buffer);
-			tk->pos_tab++;
+		}
+		else if (tk->input[tk->pos_input] == '\0')
+		{
+			tk->state = OUTSIDE;
 		}
 		else
 		{
@@ -111,20 +111,13 @@ char	**tokenizer(char *input)
 
 	if (!input || !init_tokenizer(&tk, input))
 		return (NULL);
-	init_tokenizer(&tk, input);
 	while (input[tk.pos_input] && tk.pos_tab < 99)
 	{
 		handle_outside(&tk);
 		handle_double_quotes(&tk);
 		handle_single_quotes(&tk);
 	}
-	if (tk.pos_buffer > 0)
-	{
-		tk.buffer[tk.pos_buffer] = '\0';
-		tk.tab[tk.pos_tab] = strdup(tk.buffer);
-		tk.pos_tab++;
-		tk.pos_buffer = 0;
-	}
+	create_token(&tk);
 	tk.tab[tk.pos_tab] = NULL;
 	free(tk.buffer);
 	return (tk.tab);

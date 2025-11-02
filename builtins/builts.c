@@ -1,5 +1,4 @@
 #include <minishell.h>
-#include <limits.h>
 
 int	ft_echo(char **args)
 {
@@ -25,36 +24,6 @@ int	ft_echo(char **args)
 	return (0);
 }
 
-int	ft_pwd(void)
-{
-	char	cwd[PATH_MAX];
-
-	if (getcwd(cwd, sizeof(cwd)) != NULL)
-	{
-		write(STDOUT_FILENO, cwd, ft_strlen(cwd));
-		write(STDOUT_FILENO, "\n", 1);
-	}
-	else
-	{
-		write(STDERR_FILENO, "minishell: pwd: ", 16);
-		perror("");
-	}
-	return (0);
-}
-/*
-int	ft_env(char **envp)
-{
-	int	i;
-
-	i = 0;
-	while (envp[i])
-	{
-		printf("%s", envp[i]);
-		i++;
-	}
-	return (0);
-}*/
-
 int	ft_cd(char **args)
 {
 	if (!args[1] || ft_strcmp(args[1], "~") == 0)
@@ -73,47 +42,13 @@ int	ft_cd(char **args)
 	return (0);
 }
 
-/*
-int	ft_export(char **args)
-{
-	char	*equal;
-	char	*value;
-
-	if (!args[1])
-		return (ft_env(g_env));
-	equal = ft_strchr(args[1], '=');
-	if (equal)
-	{
-		*equal = '\0';
-		value = equal + 1;
-		if (setenv(args[1], value, 1) == -1)
-		{
-			perror("export");
-			return (1);
-		}
-	}
-	return (0);
-}
-
-int	ft_unset(char **args)
-{
-	if (!args[1])
-		return (0);
-	if (unsetenv(args[1]) == -1)
-	{
-		perror("unset");
-		return (1);
-	}
-	return (0);
-}
-
-*/ 
-
-int	ft_exit(char **args)
+int	ft_exit(char **args, t_env *env)
 {
 	int	exit_code;
 	int	is_numeric;
 
+	(void)args;
+	(void)env;
 	exit_code = 0;
 	is_numeric = 1;
 	if (args[1])
@@ -132,6 +67,18 @@ int	ft_exit(char **args)
 		else
 			exit_code = ft_atoi(args[1]);
 	}
+	ft_envclear(&env);
 	exit(exit_code);
+	return (0);
 }
 
+int	ft_env(t_env *env)
+{
+	while (env != NULL)
+	{
+		printf("%s=%s\n", env->key, env->value);
+		fflush(stdout);
+		env = env->next;
+	}
+	return (0);
+}
