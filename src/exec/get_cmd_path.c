@@ -1,16 +1,10 @@
 #include <minishell.h>
 
-char	*get_cmd_path(char *cmd, t_env *env)
+static char	*handle_abs_path(char *cmd)
 {
-	int		i;
-	char	*path_str;
-	char	**dir;
-	char	*full_path;
-	char	*temp;
+	int	i;
 
 	i = 0;
-	if (!cmd || !env)
-		return (NULL);
 	while (cmd[i])
 	{
 		if (cmd[i] == '/')
@@ -22,26 +16,47 @@ char	*get_cmd_path(char *cmd, t_env *env)
 		}
 		i++;
 	}
-	path_str = get_env(env, "PATH");
-	if (!path_str)
-		return (NULL);
-	dir = ft_split(path_str, ':');
-	if (!dir)
-		return (NULL);
+	return (NULL);
+}
+
+static char	*search_in_path(char *cmd, char **dirs)
+{
+	int		i;
+	char	*temp;
+	char	*full_path;
+
 	i = 0;
-	while (dir[i])
+	while (dirs[i])
 	{
-		temp = ft_strjoin(dir[i], "/");
+		temp = ft_strjoin(dirs[i], "/");
 		full_path = ft_strjoin(temp, cmd);
 		free(temp);
 		if (access(full_path, F_OK | X_OK) == 0)
-		{
-			free_args(dir);
 			return (full_path);
-		}
 		free(full_path);
 		i++;
 	}
-	free_args(dir);
 	return (NULL);
+}
+
+char	*get_cmd_path(char *cmd, t_env *env)
+{
+	char	*path_str;
+	char	**dirs;
+	char	*result;
+
+	if (!cmd || !env)
+		return (NULL);
+	result = handle_abs_path(cmd);
+	if (result != NULL)
+		return (result);
+	path_str = get_env(env, "PATH");
+	if (!path_str)
+		return (NULL);
+	dirs = ft_split(path_str, ':');
+	if (!dirs)
+		return (NULL);
+	result = search_in_path(cmd, dirs);
+	free_args(dirs);
+	return (result);
 }

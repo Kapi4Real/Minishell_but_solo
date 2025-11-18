@@ -52,6 +52,36 @@ static void	handle_outside(t_tokenizer *tk)
 			create_token(tk);
 			tk->pos_input++;
 		}
+		else if (tk->input[tk->pos_input] == '>')
+		{
+			create_token(tk);
+			if (tk->input[tk->pos_input + 1] == '>')
+			{
+				tk->buffer[tk->pos_buffer++] = '>';
+				tk->buffer[tk->pos_buffer++] = '>';
+				tk->pos_input += 2;
+			}
+			else
+			{
+				tk->buffer[tk->pos_buffer++] = '>';
+				tk->pos_input++;
+			}
+			create_token(tk);
+		}
+		else if (tk->input[tk->pos_input] == '<')
+		{
+			create_token(tk);
+			tk->buffer[tk->pos_buffer++] = '<';
+			tk->pos_input++;
+			create_token(tk);
+		}
+		else if (tk->input[tk->pos_input] == '|')
+		{
+			create_token(tk);
+			tk->buffer[tk->pos_buffer++] = '|';
+			tk->pos_input++;
+			create_token(tk);
+		}
 		else
 		{
 			tk->buffer[tk->pos_buffer] = tk->input[tk->pos_input];
