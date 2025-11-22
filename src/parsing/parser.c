@@ -12,49 +12,6 @@
 
 #include <minishell.h>
 
-static void	rebuild_cmd_args(t_cmd *cmd, char **tokens)
-{
-	int	i;
-	int	count;
-
-	count = 0;
-	while (tokens[count])
-		count++;
-	if (cmd->args)
-		free_args(cmd->args);
-	cmd->args = malloc(sizeof(char *) * (count + 1));
-	i = 0;
-	while (i < count)
-	{
-		cmd->args[i] = ft_strdup(tokens[i]);
-		i++;
-	}
-	cmd->args[count] = NULL;
-}
-
-static void	remove_tokens(char **tokens, int start, int count)
-{
-	int	i;
-	int	j;
-
-	if (!tokens || !tokens[start])
-		return ;
-	j = 0;
-	while (j < count && tokens[start + j])
-	{
-		free(tokens[start + j]);
-		j++;
-	}
-	i = start;
-	while (tokens[start + j])
-	{
-		tokens[i] = tokens[start + j];
-		i++;
-		j++;
-	}
-	tokens[i] = NULL;
-}
-
 void	parse_redirections(t_cmd *cmd, char **tokens)
 {
 	int	i;
@@ -65,37 +22,39 @@ void	parse_redirections(t_cmd *cmd, char **tokens)
 		if (!tokens[i + 1])
 			break ;
 		if (ft_strcmp(tokens[i], ">") == 0)
-		{
-			cmd->outfile = ft_strdup(tokens[i + 1]);
-			cmd->append = 0;
-			remove_tokens(tokens, i, 2);
-		}
-		else	if (ft_strcmp(tokens[i], ">>") == 0)
-		{
-			cmd->outfile = ft_strdup(tokens[i + 1]);
-			cmd->append = 1;
-			remove_tokens(tokens, i, 2);
-		}
-		else	if (ft_strcmp(tokens[i], "<") == 0)
-		{
-			cmd->infile = ft_strdup(tokens[i + 1]);
-			remove_tokens(tokens, i, 2);
-		}
+			i = handle_output_redirect(cmd, tokens, i);
+		else if (ft_strcmp(tokens[i], ">>") == 0)
+			i = handle_append_redirect(cmd, tokens, i);
+		else if (ft_strcmp(tokens[i], "<") == 0)
+			i = handle_input_redirect(cmd, tokens, i);
 		else
 			i++;
 	}
 }
 
-t_cmd	*parse_tokens(char **tokens)
+static t_cmd	*handle_pipe(t_cmd *cmd, char **tokens, int *i, int *start)
 {
-	t_cmd	*first_cmd;
+	tokens[*i] = NULL;
+	parse_redirections(cmd, &tokens[*start]);
+	rebuild_cmd_args(cmd, &tokens[*start]);
+	cmd->next = init_cmd();
+	(*i)++;
+	*start = *i;
+	return (cmd->next);
+}
+
+static void	finalize_command(t_cmd *cmd, char **tokens, int start)
+{
+	parse_redirections(cmd, &tokens[start]);
+	rebuild_cmd_args(cmd, &tokens[start]);
+}
+
+static t_cmd	*parse_tokens_loop(char **tokens, t_cmd **first_cmd)
+{
 	t_cmd	*cmd;
 	int		i;
 	int		start;
 
-	if (!tokens || !tokens[0])
-		return (NULL);
-	first_cmd = NULL;
 	cmd = NULL;
 	i = 0;
 	start = 0;
@@ -104,26 +63,27 @@ t_cmd	*parse_tokens(char **tokens)
 		if (!cmd)
 		{
 			cmd = init_cmd();
-			first_cmd = cmd;
+			*first_cmd = cmd;
 		}
 		if (ft_strcmp(tokens[i], "|") == 0)
-		{
-			tokens[i] = NULL;
-			parse_redirections(cmd, &tokens[start]);
-			rebuild_cmd_args(cmd, &tokens[start]);
-			cmd->next = init_cmd();
-			cmd = cmd->next;
-			i++;
-			start = i;
-		}
+			cmd = handle_pipe(cmd, tokens, &i, &start);
 		else
-		{
 			i++;
-		}
 	}
+	return (cmd);
+}
+
+t_cmd	*parse_tokens(char **tokens)
+{
+	t_cmd	*first_cmd;
+	t_cmd	*cmd;
+
+	if (!tokens || !tokens[0])
+		return (NULL);
+	first_cmd = NULL;
+	cmd = parse_tokens_loop(tokens, &first_cmd);
 	if (!cmd)
 		return (NULL);
-	parse_redirections(cmd, &tokens[start]);
-	rebuild_cmd_args(cmd, &tokens[start]);
+	finalize_command(cmd, tokens, 0);
 	return (first_cmd);
 }

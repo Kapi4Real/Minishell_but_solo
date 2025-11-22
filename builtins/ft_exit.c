@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_exit.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: student <student@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,39 +12,42 @@
 
 #include <minishell.h>
 
-static void	run_shell_loop(t_env *env)
+static int	check_exit_args(char **args, int *exit_code)
 {
-	char	*command;
+	int	is_numeric;
 
-	while (1)
+	is_numeric = 1;
+	if (args[1])
 	{
-		command = readline("minishell> ");
-		if (command == NULL)
+		if (args[2])
 		{
-			printf("exit\n");
-			break ;
+			ft_putstr_fd("minishell: exit: too many arguments\n", 2);
+			return (1);
 		}
-		g_signal_received = 0;
-		if (strcmp(command, "exit") == 0)
+		is_numeric = ft_isdigit_str(args[1]);
+		if (!is_numeric)
 		{
-			free(command);
-			break ;
+			ft_putstr_fd("minishell: exit: numeric argument required\n", 2);
+			*exit_code = 2;
 		}
-		process_command(command, env);
-		free(command);
+		else
+			*exit_code = ft_atoi(args[1]);
 	}
+	return (0);
 }
 
-int	main(int argc, char **argv, char **envp)
+int	ft_exit(char **args, t_env *env)
 {
-	t_env	*env;
+	int	exit_code;
+	int	ret;
 
-	(void)argc;
-	(void)argv;
-	init_shell(&env, envp);
-	run_shell_loop(env);
+	(void)args;
+	(void)env;
+	exit_code = 0;
+	ret = check_exit_args(args, &exit_code);
+	if (ret)
+		return (ret);
 	ft_envclear(&env);
-	fflush(stdout);
-	fflush(stderr);
+	exit(exit_code);
 	return (0);
 }

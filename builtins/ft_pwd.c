@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_pwd.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: student <student@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,39 +12,17 @@
 
 #include <minishell.h>
 
-static void	run_shell_loop(t_env *env)
+int	ft_pwd(void)
 {
-	char	*command;
+	char	*cwd;
 
-	while (1)
+	cwd = getcwd(NULL, 0);
+	if (cwd == NULL)
 	{
-		command = readline("minishell> ");
-		if (command == NULL)
-		{
-			printf("exit\n");
-			break ;
-		}
-		g_signal_received = 0;
-		if (strcmp(command, "exit") == 0)
-		{
-			free(command);
-			break ;
-		}
-		process_command(command, env);
-		free(command);
+		perror("pwd");
+		return (1);
 	}
-}
-
-int	main(int argc, char **argv, char **envp)
-{
-	t_env	*env;
-
-	(void)argc;
-	(void)argv;
-	init_shell(&env, envp);
-	run_shell_loop(env);
-	ft_envclear(&env);
-	fflush(stdout);
-	fflush(stderr);
+	printf("%s\n", cwd);
+	free(cwd);
 	return (0);
 }

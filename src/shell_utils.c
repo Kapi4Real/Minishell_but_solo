@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   shell_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: student <student@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,39 +12,57 @@
 
 #include <minishell.h>
 
-static void	run_shell_loop(t_env *env)
+static void	execute_command(char **args, t_env *env)
 {
-	char	*command;
+	t_cmd	*cmd;
 
-	while (1)
-	{
-		command = readline("minishell> ");
-		if (command == NULL)
-		{
-			printf("exit\n");
-			break ;
-		}
-		g_signal_received = 0;
-		if (strcmp(command, "exit") == 0)
-		{
-			free(command);
-			break ;
-		}
-		process_command(command, env);
-		free(command);
-	}
+	if (!args || !args[0])
+		return ;
+	cmd = parse_tokens(args);
+	if (!cmd)
+		return ;
+	execute_pipeline(cmd, &env);
+	free_cmd(cmd);
 }
 
-int	main(int argc, char **argv, char **envp)
+void	free_args(char **args)
 {
-	t_env	*env;
+	int	i;
 
-	(void)argc;
-	(void)argv;
-	init_shell(&env, envp);
-	run_shell_loop(env);
-	ft_envclear(&env);
-	fflush(stdout);
-	fflush(stderr);
-	return (0);
+	i = 0;
+	if (!args)
+		return ;
+	while (args[i])
+	{
+		free(args[i]);
+		i++;
+	}
+	free(args);
+}
+
+void	init_shell(t_env **env, char **envp)
+{
+	t_cmd	*cmd;
+	char	*test_path;
+
+	*env = init_env(envp);
+	cmd = init_cmd();
+	free_cmd(cmd);
+	test_path = get_cmd_path("ls", *env);
+	free(test_path);
+	setup_signals();
+}
+
+void	process_command(char *command, t_env *env)
+{
+	char	**args;
+
+	if (strlen(command) > 0)
+		add_history(command);
+	args = tokenizer(command);
+	if (args)
+	{
+		execute_command(args, env);
+		free_args(args);
+	}
 }

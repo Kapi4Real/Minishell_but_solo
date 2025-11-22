@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: student <student@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -11,40 +11,22 @@
 /* ************************************************************************** */
 
 #include <minishell.h>
+#include <signal.h>
 
-static void	run_shell_loop(t_env *env)
+volatile sig_atomic_t	g_signal_received = 0;
+
+static void	handle_sigint(int sig)
 {
-	char	*command;
-
-	while (1)
-	{
-		command = readline("minishell> ");
-		if (command == NULL)
-		{
-			printf("exit\n");
-			break ;
-		}
-		g_signal_received = 0;
-		if (strcmp(command, "exit") == 0)
-		{
-			free(command);
-			break ;
-		}
-		process_command(command, env);
-		free(command);
-	}
+	(void)sig;
+	g_signal_received = SIGINT;
+	write(STDOUT_FILENO, "\n", 1);
+	rl_replace_line("", 0);
+	rl_on_new_line();
+	rl_redisplay();
 }
 
-int	main(int argc, char **argv, char **envp)
+void	setup_signals(void)
 {
-	t_env	*env;
-
-	(void)argc;
-	(void)argv;
-	init_shell(&env, envp);
-	run_shell_loop(env);
-	ft_envclear(&env);
-	fflush(stdout);
-	fflush(stderr);
-	return (0);
+	signal(SIGINT, handle_sigint);
+	signal(SIGQUIT, SIG_IGN);
 }

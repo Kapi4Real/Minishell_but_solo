@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_unset.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: student <student@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,39 +12,48 @@
 
 #include <minishell.h>
 
-static void	run_shell_loop(t_env *env)
+static void	remove_env_node(t_env **env, t_env *current, t_env *prev)
 {
-	char	*command;
-
-	while (1)
-	{
-		command = readline("minishell> ");
-		if (command == NULL)
-		{
-			printf("exit\n");
-			break ;
-		}
-		g_signal_received = 0;
-		if (strcmp(command, "exit") == 0)
-		{
-			free(command);
-			break ;
-		}
-		process_command(command, env);
-		free(command);
-	}
+	if (prev)
+		prev->next = current->next;
+	else
+		*env = current->next;
+	free(current->key);
+	free(current->value);
+	free(current);
 }
 
-int	main(int argc, char **argv, char **envp)
+static int	unset_single_var(char *var_name, t_env **env)
 {
-	t_env	*env;
+	t_env	*current;
+	t_env	*prev;
 
-	(void)argc;
-	(void)argv;
-	init_shell(&env, envp);
-	run_shell_loop(env);
-	ft_envclear(&env);
-	fflush(stdout);
-	fflush(stderr);
+	current = *env;
+	prev = NULL;
+	while (current)
+	{
+		if (ft_strcmp(current->key, var_name) == 0)
+		{
+			remove_env_node(env, current, prev);
+			break ;
+		}
+		prev = current;
+		current = current->next;
+	}
+	return (0);
+}
+
+int	ft_unset(char **args, t_env **env)
+{
+	int	i;
+
+	if (!args[1])
+		return (0);
+	i = 1;
+	while (args[i])
+	{
+		unset_single_var(args[i], env);
+		i++;
+	}
 	return (0);
 }

@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_echo.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: student <student@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,39 +12,26 @@
 
 #include <minishell.h>
 
-static void	run_shell_loop(t_env *env)
+int	ft_echo(char **args)
 {
-	char	*command;
+	int	newline;
+	int	i;
 
-	while (1)
+	newline = 1;
+	i = 1;
+	if (args[1] && !ft_strcmp(args[1], "-n"))
 	{
-		command = readline("minishell> ");
-		if (command == NULL)
-		{
-			printf("exit\n");
-			break ;
-		}
-		g_signal_received = 0;
-		if (strcmp(command, "exit") == 0)
-		{
-			free(command);
-			break ;
-		}
-		process_command(command, env);
-		free(command);
+		newline = 0;
+		i++;
 	}
-}
-
-int	main(int argc, char **argv, char **envp)
-{
-	t_env	*env;
-
-	(void)argc;
-	(void)argv;
-	init_shell(&env, envp);
-	run_shell_loop(env);
-	ft_envclear(&env);
-	fflush(stdout);
-	fflush(stderr);
+	while (args[i])
+	{
+		ft_putstr_fd(args[i], 1);
+		if (args[i + 1])
+			write(1, " ", 1);
+		i++;
+	}
+	if (newline)
+		write(1, "\n", 1);
 	return (0);
 }

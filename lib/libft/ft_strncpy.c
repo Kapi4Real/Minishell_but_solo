@@ -1,34 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   free_cmd.c                                         :+:      :+:    :+:   */
+/*   ft_strncpy.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: student <student@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/18 00:00:00 by student          #+#    #+#             */
-/*   Updated: 2025/11/18 00:00:00 by student         ###   ########.fr       */
+/*   Created: 2025/01/01 00:00:00 by student          #+#    #+#             */
+/*   Updated: 2025/01/01 00:00:00 by student         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <minishell.h>
+#include "libft.h"
 
-void	free_cmd(t_cmd *cmd)
+char	*ft_strncpy(char *dest, const char *src, size_t n)
 {
-	int	i;
+	size_t	i;
 
-	if (!cmd)
-		return ;
-	if (cmd->args)
+	i = 0;
+	while (i < n && src[i])
 	{
-		i = 0;
-		while (cmd->args[i])
-		{
-			free(cmd->args[i]);
-			i++;
-		}
-		free(cmd->args);
+		dest[i] = src[i];
+		i++;
 	}
-	free(cmd->infile);
-	free(cmd->outfile);
-	free(cmd);
+	while (i < n)
+	{
+		dest[i] = '\0';
+		i++;
+	}
+	return (dest);
 }

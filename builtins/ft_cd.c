@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_cd.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: student <student@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,39 +12,20 @@
 
 #include <minishell.h>
 
-static void	run_shell_loop(t_env *env)
+int	ft_cd(char **args)
 {
-	char	*command;
-
-	while (1)
+	if (!args[1] || ft_strcmp(args[1], "~") == 0)
 	{
-		command = readline("minishell> ");
-		if (command == NULL)
+		if (chdir(getenv("HOME")) != 0)
 		{
-			printf("exit\n");
-			break ;
+			perror("cd");
+			return (1);
 		}
-		g_signal_received = 0;
-		if (strcmp(command, "exit") == 0)
-		{
-			free(command);
-			break ;
-		}
-		process_command(command, env);
-		free(command);
 	}
-}
-
-int	main(int argc, char **argv, char **envp)
-{
-	t_env	*env;
-
-	(void)argc;
-	(void)argv;
-	init_shell(&env, envp);
-	run_shell_loop(env);
-	ft_envclear(&env);
-	fflush(stdout);
-	fflush(stderr);
+	else if (chdir(args[1]) != 0)
+	{
+		perror("cd");
+		return (1);
+	}
 	return (0);
 }

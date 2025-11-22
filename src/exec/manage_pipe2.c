@@ -57,53 +57,25 @@ int	wait_children(t_cmd *cmd)
 	return (last_status);
 }
 
-static int	execute_single_builtin(t_cmd *cmd, t_env **env)
+int	execute_pipeline(t_cmd *cmd, t_env **env)
 {
 	int	saved_stdin;
 	int	saved_stdout;
 	int	result;
 
-	saved_stdin = -1;
-	saved_stdout = -1;
-	if (apply_redirections(cmd, &saved_stdin, &saved_stdout) != 0)
-		return (1);
-	result = exec_builtins(cmd->args, *env);
-	restore_redirections_parent(saved_stdin, saved_stdout);
-	return (result);
-}
-
-static int	execute_pipeline_loop(t_cmd *cmd, t_env **env)
-{
-	t_cmd	*current;
-	int		prev_pipe_read;
-	int		j;
-
-	current = cmd;
-	prev_pipe_read = 0;
-	while (current)
-	{
-		j = 0;
-		while (current->args && current->args[j])
-			j++;
-		if (!create_pipe(current))
-			return (1);
-		if (!fork_and_execute(current, *env, prev_pipe_read))
-			return (1);
-		update_pipe(current, &prev_pipe_read);
-		current = current->next;
-	}
-	return (wait_children(cmd));
-}
-
-int	execute_pipeline(t_cmd *cmd, t_env **env)
-{
-	int	result;
-
 	if (!cmd)
 		return (1);
 	if (!cmd->next && is_builtin(cmd->args))
-		return (execute_single_builtin(cmd, env));
-	result = execute_pipeline_loop(cmd, env);
+	{
+		saved_stdin = -1;
+		saved_stdout = -1;
+		if (apply_redirections(cmd, &saved_stdin, &saved_stdout) != 0)
+			return (1);
+		result = exec_builtins(cmd->args, env);
+		restore_redirections_parent(saved_stdin, saved_stdout);
+		return (result);
+	}
+	result = execute_pipeline_loop(cmd, *env);
 	close_all_pipes(cmd);
 	return (result);
 }

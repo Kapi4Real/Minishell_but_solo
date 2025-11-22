@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   init_env.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: student <student@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/11/18 00:00:00 by student          #+#    #+#             */
+/*   Updated: 2025/11/18 00:00:00 by student         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <minishell.h>
 
 void	ft_envclear(t_env **env)
@@ -49,29 +61,37 @@ void	ft_envadd_back(t_env **env, t_env *new)
 	temp->next = new;
 }
 
+static void	process_env_var(char *env_str, t_env **env_list)
+{
+	char	*equal_sign;
+	char	*key;
+	char	*value;
+	t_env	*new_node;
+	int		len;
+
+	equal_sign = ft_strchr(env_str, '=');
+	if (equal_sign)
+	{
+		key = ft_substr(env_str, 0, equal_sign - env_str);
+		len = ft_strlen(env_str);
+		value = ft_substr(env_str, (equal_sign - env_str) + 1, len);
+		new_node = ft_envnew(key, value);
+		ft_envadd_back(env_list, new_node);
+		free(key);
+		free(value);
+	}
+}
+
 t_env	*init_env(char **envp)
 {
 	int		i;
 	t_env	*env_list;
-	t_env	*new_node;
-	char	*equal_sign;
-	char	*key;
-	char	*value;
 
 	i = 0;
 	env_list = NULL;
 	while (envp[i])
 	{
-		equal_sign = ft_strchr(envp[i], '=');
-		if (equal_sign)
-		{
-			key = ft_substr(envp[i], 0, equal_sign - envp[i]);
-			value = ft_substr(envp[i], (equal_sign - envp[i]) + 1, ft_strlen(envp[i]));
-			new_node = ft_envnew(key, value);
-			ft_envadd_back(&env_list, new_node);
-			free(key);
-			free(value);
-		}
+		process_env_var(envp[i], &env_list);
 		i++;
 	}
 	return (env_list);

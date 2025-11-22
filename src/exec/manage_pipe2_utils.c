@@ -1,35 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   manage_pipe.c                                      :+:      :+:    :+:   */
+/*   manage_pipe2_utils.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: student <student@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/01 00:00:00 by student          #+#    #+#             */
-/*   Updated: 2025/01/01 00:00:00 by student         ###   ########.fr       */
+/*   Created: 2025/11/18 00:00:00 by student          #+#    #+#             */
+/*   Updated: 2025/11/18 00:00:00 by student         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include <minishell.h>
 #include <fcntl.h>
 
-static void	handle_input_execution(t_cmd *cmd)
+static void	handle_input_child(t_cmd *cmd)
 {
 	int	fd;
 
 	fd = open(cmd->infile, O_RDONLY);
 	if (fd == -1)
 	{
-		ft_putstr_fd("minishell: ", 2);
-		ft_putstr_fd(cmd->infile, 2);
-		ft_putstr_fd(": No such file or directory\n", 2);
-		exit(1);
+		perror("minishell: input redirection");
+		exit(EXIT_FAILURE);
 	}
 	dup2(fd, STDIN_FILENO);
 	close(fd);
 }
 
-static void	handle_output_execution(t_cmd *cmd)
+static void	handle_output_child(t_cmd *cmd)
 {
 	int	fd;
 
@@ -39,19 +37,36 @@ static void	handle_output_execution(t_cmd *cmd)
 		fd = open(cmd->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fd == -1)
 	{
-		ft_putstr_fd("minishell: ", 2);
-		ft_putstr_fd(cmd->outfile, 2);
-		ft_putstr_fd(": Permission denied\n", 2);
-		exit(1);
+		perror("minishell: output redirection");
+		exit(EXIT_FAILURE);
 	}
 	dup2(fd, STDOUT_FILENO);
 	close(fd);
 }
 
-void	execute_redirections(t_cmd *cmd)
+void	setup_child_redirections(t_cmd *cmd)
 {
 	if (cmd->infile)
-		handle_input_execution(cmd);
+		handle_input_child(cmd);
 	if (cmd->outfile)
-		handle_output_execution(cmd);
+		handle_output_child(cmd);
+}
+
+int	execute_pipeline_loop(t_cmd *cmd, t_env *env)
+{
+	t_cmd	*current;
+	int		prev_pipe_read;
+
+	current = cmd;
+	prev_pipe_read = 0;
+	while (current)
+	{
+		if (!create_pipe(current))
+			return (1);
+		if (!fork_and_execute(current, env, prev_pipe_read))
+			return (1);
+		update_pipe(current, &prev_pipe_read);
+		current = current->next;
+	}
+	return (wait_children(cmd));
 }
