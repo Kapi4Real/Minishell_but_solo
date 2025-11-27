@@ -23,7 +23,7 @@ void	ft_envclear(t_env **env)
 	while (temp)
 	{
 		next = temp->next;
-		free(temp->key);
+		free(temp->name);
 		free(temp->value);
 		free(temp);
 		temp = next;
@@ -38,8 +38,9 @@ t_env	*ft_envnew(char *key, char *value)
 	new_node = malloc(sizeof(t_env));
 	if (!new_node)
 		return (NULL);
-	new_node->key = ft_strdup(key);
+	new_node->name = ft_strdup(key);
 	new_node->value = ft_strdup(value);
+	new_node->last_exit_status = 0;
 	new_node->next = NULL;
 	return (new_node);
 }

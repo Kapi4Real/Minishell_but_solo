@@ -15,13 +15,16 @@
 static void	execute_command(char **args, t_env *env)
 {
 	t_cmd	*cmd;
+	int		exit_status;
 
 	if (!args || !args[0])
 		return ;
 	cmd = parse_tokens(args);
 	if (!cmd)
 		return ;
-	execute_pipeline(cmd, &env);
+	exit_status = execute_pipeline(cmd, &env);
+	if (env)
+		env->last_exit_status = exit_status;
 	free_cmd(cmd);
 }
 
@@ -56,13 +59,18 @@ void	init_shell(t_env **env, char **envp)
 void	process_command(char *command, t_env *env)
 {
 	char	**args;
+	char	*expanded_command;
 
 	if (strlen(command) > 0)
 		add_history(command);
-	args = tokenizer(command);
+	expanded_command = expand_env_vars(command, env);
+	if (!expanded_command)
+		return ;
+	args = tokenizer(expanded_command);
 	if (args)
 	{
 		execute_command(args, env);
 		free_args(args);
 	}
+	free(expanded_command);
 }

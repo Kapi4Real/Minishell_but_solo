@@ -3,18 +3,6 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: togomez <marvin@42.fr>                     +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/11 16:13:26 by togomez           #+#    #+#             */
-/*   Updated: 2024/10/11 16:13:47 by togomez          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   libft.h                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
 /*   By: student <student@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/18 00:00:00 by student          #+#    #+#             */
@@ -84,7 +72,6 @@ int		ft_strcmp(char *s1, char *s2);
 int		ft_isdigit_str(const char *str);
 char	*ft_strjoin3(char const *s1, char const *s2, char const *s3);
 int		ft_isspace(int c);
-char	*ft_strtok(char *str, const char *delim);
 size_t	ft_strspn(const char *s, const char *accept);
 size_t	ft_strcspn(const char *s, const char *reject);
 

@@ -21,7 +21,7 @@ char	*get_env(t_env *env, char *key)
 	current = env;
 	while (current)
 	{
-		if (ft_strcmp(current->key, key) == 0)
+		if (ft_strcmp(current->name, key) == 0)
 			return (current->value);
 		current = current->next;
 	}

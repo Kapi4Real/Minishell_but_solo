@@ -16,7 +16,7 @@ int	ft_env(t_env *env)
 {
 	while (env != NULL)
 	{
-		printf("%s=%s\n", env->key, env->value);
+		printf("%s=%s\n", env->name, env->value);
 		fflush(stdout);
 		env = env->next;
 	}

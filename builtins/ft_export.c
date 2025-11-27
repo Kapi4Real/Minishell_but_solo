@@ -14,7 +14,7 @@
 
 static t_env	*find_env_var(t_env *env, char *key)
 {
-	while (env && ft_strcmp(env->key, key) != 0)
+	while (env && ft_strcmp(env->name, key) != 0)
 		env = env->next;
 	return (env);
 }

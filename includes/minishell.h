@@ -17,14 +17,16 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <signal.h>
+# include <limits.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 # include "libft.h"
 
 typedef struct s_env
 {
-	char			*key;
+	char			*name;
 	char			*value;
+	int				last_exit_status;
 	struct s_env	*next;
 }	t_env;
 
@@ -63,6 +65,14 @@ typedef struct s_cmd
 	int				pid;
 	struct s_cmd	*next;
 }	t_cmd;
+
+typedef struct s_expand_data
+{
+	char	*result;
+	int		*i;
+	int		*j;
+	t_env	*env;
+}	t_expand_data;
 
 t_token	*tokenize(char *input);
 t_cmd	*parse(t_token *tokens);
@@ -134,6 +144,11 @@ void	handle_quotes(t_tokenizer *tk);
 void	handle_outside(t_tokenizer *tk);
 void	handle_redirection_tokens(t_tokenizer *tk);
 void	handle_output_redirection_token(t_tokenizer *tk);
+
+char	*expand_env_vars(char *input, t_env *env);
+int		take_var_name(char *input, int *pos, char **var_name);
+void	copy_exit_status(char *result, int *j, t_env *env);
+void	copy_var_value(char *result, int *j, char *value);
 
 extern volatile sig_atomic_t	g_signal_received;
 

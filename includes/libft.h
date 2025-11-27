@@ -2,6 +2,11 @@
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: togomez <togomez@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/25 10:52:50 by togomez           #+#    #+#             */
+/*   Updated: 2025/04/25 11:22:20 by togomez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +71,6 @@ int		ft_strcmp(char *s1, char *s2);
 int		ft_isdigit_str(const char *str);
 char	*ft_strjoin3(char const *s1, char const *s2, char const *s3);
 int		ft_isspace(int c);
-char	*ft_strtok(char *str, const char *delim);
 size_t	ft_strspn(const char *s, const char *accept);
 size_t	ft_strcspn(const char *s, const char *reject);
 

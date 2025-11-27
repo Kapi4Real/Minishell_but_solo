@@ -12,6 +12,20 @@
 
 #include <minishell.h>
 
+static void	copy_quoted_content(char *token, int *i, char *result, int *j)
+{
+	char	quote_type;
+
+	quote_type = token[*i];
+	(*i)++;
+	while (token[*i] && token[*i] != quote_type)
+	{
+		result[(*j)++] = token[(*i)++];
+	}
+	if (token[*i] == quote_type)
+		(*i)++;
+}
+
 char	*remove_quotes(char *token)
 {
 	int		i;
@@ -27,9 +41,9 @@ char	*remove_quotes(char *token)
 	j = 0;
 	while (token[i])
 	{
-		if (token[i] == '\'' || token[i] == '"')
+		if ((token[i] == '\'' || token[i] == '"'))
 		{
-			i++;
+			copy_quoted_content(token, &i, result, &j);
 			continue ;
 		}
 		result[j] = token[i];
