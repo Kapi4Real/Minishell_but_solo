@@ -12,18 +12,18 @@
 
 #include <minishell.h>
 
-static void	handle_double_quotes(t_tokenizer *tk)
+static void	manage_double_quotes(t_tokenizer *tk)
 {
-	if (tk->state == IN_DOUBLE_QUOTES)
+	if (tk->mode == IN_DOUBLE_QUOTES)
 	{
 		if (tk->input[tk->pos_input] == '"')
 		{
-			tk->state = OUTSIDE;
+			tk->mode = OUTSIDE;
 			tk->pos_input++;
 		}
 		else if (tk->input[tk->pos_input] == '\0')
 		{
-			tk->state = OUTSIDE;
+			tk->mode = OUTSIDE;
 		}
 		else
 		{
@@ -34,18 +34,18 @@ static void	handle_double_quotes(t_tokenizer *tk)
 	}
 }
 
-static void	handle_single_quotes(t_tokenizer *tk)
+static void	manage_single_quotes(t_tokenizer *tk)
 {
-	if (tk->state == IN_SINGLE_QUOTES)
+	if (tk->mode == IN_SINGLE_QUOTES)
 	{
 		if (tk->input[tk->pos_input] == '\'')
 		{
-			tk->state = OUTSIDE;
+			tk->mode = OUTSIDE;
 			tk->pos_input++;
 		}
 		else if (tk->input[tk->pos_input] == '\0')
 		{
-			tk->state = OUTSIDE;
+			tk->mode = OUTSIDE;
 		}
 		else
 		{
@@ -58,19 +58,19 @@ static void	handle_single_quotes(t_tokenizer *tk)
 
 void	process_quotes(t_tokenizer *tk)
 {
-	if (tk->input[tk->pos_input] == '"' && tk->state == OUTSIDE)
+	if (tk->input[tk->pos_input] == '"' && tk->mode == OUTSIDE)
 	{
-		tk->state = IN_DOUBLE_QUOTES;
+		tk->mode = IN_DOUBLE_QUOTES;
 		tk->pos_input++;
 	}
-	else if (tk->input[tk->pos_input] == '\'' && tk->state == OUTSIDE)
+	else if (tk->input[tk->pos_input] == '\'' && tk->mode == OUTSIDE)
 	{
-		tk->state = IN_SINGLE_QUOTES;
+		tk->mode = IN_SINGLE_QUOTES;
 		tk->pos_input++;
 	}
 	else
 	{
-		handle_double_quotes(tk);
-		handle_single_quotes(tk);
+		treat_double_quotes(tk);
+		treat_single_quotes(tk);
 	}
 }

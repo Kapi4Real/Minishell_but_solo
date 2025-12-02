@@ -14,21 +14,25 @@
 
 void	free_cmd(t_cmd *cmd)
 {
-	int	i;
+	int		i;
+	t_cmd	*next;
 
-	if (!cmd)
-		return ;
-	if (cmd->args)
+	while (cmd)
 	{
-		i = 0;
-		while (cmd->args[i])
+		next = cmd->next;
+		if (cmd->args)
 		{
-			free(cmd->args[i]);
-			i++;
+			i = 0;
+			while (cmd->args[i])
+			{
+				free(cmd->args[i]);
+				i++;
+			}
+			free(cmd->args);
 		}
-		free(cmd->args);
+		free(cmd->infile);
+		free(cmd->outfile);
+		free(cmd);
+		cmd = next;
 	}
-	free(cmd->infile);
-	free(cmd->outfile);
-	free(cmd);
 }

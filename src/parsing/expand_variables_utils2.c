@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expand_variables_core.c                            :+:      :+:    :+:   */
+/*   expand_variables_utils2.c                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: student <student@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,7 +12,7 @@
 
 #include <minishell.h>
 
-static void	process_exit_status(int *i, char *result, int *j, t_env *env)
+static void	process_exit(int *i, char *result, int *j, t_env *env)
 {
 	copy_exit_status(result, j, env);
 	(*i) += 2;
@@ -63,7 +63,7 @@ char	*expand_env_vars(char *input, t_env *env)
 		else if (input[i] == '\'' && in_single_quotes)
 			in_single_quotes = 0;
 		if (input[i] == '$' && input[i + 1] == '?' && !in_single_quotes)
-			process_exit_status(&i, data.result, &j, env);
+			process_exit(&i, data.result, &j, env);
 		else if (input[i] == '$' && !in_single_quotes)
 			process_variable(input, &data);
 		else

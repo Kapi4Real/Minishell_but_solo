@@ -12,7 +12,7 @@
 
 #include <minishell.h>
 
-int	handle_output_redirect(t_cmd *cmd, char **tokens, int i)
+int	treat_output_redirect(t_cmd *cmd, char **tokens, int i)
 {
 	if (cmd->outfile)
 		free(cmd->outfile);
@@ -22,7 +22,7 @@ int	handle_output_redirect(t_cmd *cmd, char **tokens, int i)
 	return (i);
 }
 
-int	handle_append_redirect(t_cmd *cmd, char **tokens, int i)
+int	treat_append_redirect(t_cmd *cmd, char **tokens, int i)
 {
 	if (cmd->outfile)
 		free(cmd->outfile);
@@ -55,7 +55,7 @@ void	remove_tokens(char **tokens, int start, int count)
 	tokens[i] = NULL;
 }
 
-int	handle_input_redirect(t_cmd *cmd, char **tokens, int i)
+int	treat_input_redirect(t_cmd *cmd, char **tokens, int i)
 {
 	if (cmd->infile)
 		free(cmd->infile);

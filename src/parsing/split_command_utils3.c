@@ -14,18 +14,18 @@
 #include <stdlib.h>
 #include <string.h>
 
-void	handle_double_quotes(t_tokenizer *tk)
+void	treat_double_quotes(t_tokenizer *tk)
 {
-	if (tk->state == IN_DOUBLE_QUOTES)
+	if (tk->mode == IN_DOUBLE_QUOTES)
 	{
 		if (tk->input[tk->pos_input] == '"')
 		{
-			tk->state = OUTSIDE;
+			tk->mode = OUTSIDE;
 			tk->pos_input++;
 		}
 		else if (tk->input[tk->pos_input] == '\0')
 		{
-			tk->state = OUTSIDE;
+			tk->mode = OUTSIDE;
 		}
 		else
 		{
@@ -36,18 +36,18 @@ void	handle_double_quotes(t_tokenizer *tk)
 	}
 }
 
-void	handle_single_quotes(t_tokenizer *tk)
+void	treat_single_quotes(t_tokenizer *tk)
 {
-	if (tk->state == IN_SINGLE_QUOTES)
+	if (tk->mode == IN_SINGLE_QUOTES)
 	{
 		if (tk->input[tk->pos_input] == '\'')
 		{
-			tk->state = OUTSIDE;
+			tk->mode = OUTSIDE;
 			tk->pos_input++;
 		}
 		else if (tk->input[tk->pos_input] == '\0')
 		{
-			tk->state = OUTSIDE;
+			tk->mode = OUTSIDE;
 		}
 		else
 		{
@@ -58,19 +58,19 @@ void	handle_single_quotes(t_tokenizer *tk)
 	}
 }
 
-void	handle_output_redirection_token(t_tokenizer *tk)
+void	output_redir_token(t_tokenizer *tk)
 {
 	create_token(tk);
 	if (tk->input[tk->pos_input + 1] == '>')
 	{
-		tk->buffer[tk->pos_buffer++] = '>';
-		tk->buffer[tk->pos_buffer++] = '>';
+		tk->tab[tk->pos_tab] = strdup(">>");
+		tk->pos_tab++;
 		tk->pos_input += 2;
 	}
 	else
 	{
-		tk->buffer[tk->pos_buffer++] = '>';
+		tk->tab[tk->pos_tab] = strdup(">");
+		tk->pos_tab++;
 		tk->pos_input++;
 	}
-	create_token(tk);
 }

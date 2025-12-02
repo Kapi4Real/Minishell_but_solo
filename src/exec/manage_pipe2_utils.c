@@ -13,7 +13,7 @@
 #include <minishell.h>
 #include <fcntl.h>
 
-static void	handle_input_child(t_cmd *cmd)
+static void	treat_input_child(t_cmd *cmd)
 {
 	int	fd;
 
@@ -27,7 +27,7 @@ static void	handle_input_child(t_cmd *cmd)
 	close(fd);
 }
 
-static void	handle_output_child(t_cmd *cmd)
+static void	treat_output_child(t_cmd *cmd)
 {
 	int	fd;
 
@@ -47,9 +47,9 @@ static void	handle_output_child(t_cmd *cmd)
 void	setup_child_redirections(t_cmd *cmd)
 {
 	if (cmd->infile)
-		handle_input_child(cmd);
+		treat_input_child(cmd);
 	if (cmd->outfile)
-		handle_output_child(cmd);
+		treat_output_child(cmd);
 }
 
 int	execute_pipeline_loop(t_cmd *cmd, t_env *env)

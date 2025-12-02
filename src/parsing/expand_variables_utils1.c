@@ -12,7 +12,7 @@
 
 #include <minishell.h>
 
-static int	handle_braced_var(char *input, int *pos, char **var_name)
+static int	treat_braced_var(char *input, int *pos, char **var_name)
 {
 	int	start;
 	int	end;
@@ -34,7 +34,7 @@ static int	handle_braced_var(char *input, int *pos, char **var_name)
 	return (1);
 }
 
-static int	handle_simple_var(char *input, int *pos, char **var_name)
+static int	treat_simple_var(char *input, int *pos, char **var_name)
 {
 	int	start;
 	int	end;
@@ -58,7 +58,7 @@ int	take_var_name(char *input, int *pos, char **var_name)
 		return (0);
 	(*pos)++;
 	if (input[*pos] == '{')
-		return (handle_braced_var(input, pos, var_name));
+		return (treat_braced_var(input, pos, var_name));
 	else
-		return (handle_simple_var(input, pos, var_name));
+		return (treat_simple_var(input, pos, var_name));
 }

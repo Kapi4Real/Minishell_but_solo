@@ -13,7 +13,7 @@
 #include "minishell.h"
 #include <fcntl.h>
 
-static void	handle_input_execution(t_cmd *cmd)
+static void	treat_input_execution(t_cmd *cmd)
 {
 	int	fd;
 
@@ -29,7 +29,7 @@ static void	handle_input_execution(t_cmd *cmd)
 	close(fd);
 }
 
-static void	handle_output_execution(t_cmd *cmd)
+static void	treat_output_execution(t_cmd *cmd)
 {
 	int	fd;
 
@@ -51,7 +51,7 @@ static void	handle_output_execution(t_cmd *cmd)
 void	execute_redirections(t_cmd *cmd)
 {
 	if (cmd->infile)
-		handle_input_execution(cmd);
+		treat_input_execution(cmd);
 	if (cmd->outfile)
-		handle_output_execution(cmd);
+		treat_output_execution(cmd);
 }

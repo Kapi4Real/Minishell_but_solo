@@ -35,14 +35,14 @@ typedef enum e_token_state
 	OUTSIDE,
 	IN_DOUBLE_QUOTES,
 	IN_SINGLE_QUOTES
-}	t_token_state;
+}	t_token_mode;
 
 typedef struct s_tokenizer
 {
 	char			*input;
 	char			*buffer;
 	char			**tab;
-	t_token_state	state;
+	t_token_mode	mode;
 	int				pos_input;
 	int				pos_buffer;
 	int				pos_tab;
@@ -114,7 +114,7 @@ char	*get_env(t_env *env, char *key);
 char	*get_cmd_path(char *cmd, t_env *env);
 
 void	free_commands(t_cmd *commands);
-void	handle_error(char *msg);
+void	treat_error(char *msg);
 void	free_args(char **args);
 
 void	setup_signals(void);
@@ -122,28 +122,28 @@ void	init_shell(t_env **env, char **envp);
 void	process_command(char *command, t_env *env);
 void	process_quotes(t_tokenizer *tk);
 
-int		handle_output_redirect(t_cmd *cmd, char **tokens, int i);
-int		handle_append_redirect(t_cmd *cmd, char **tokens, int i);
-int		handle_input_redirect(t_cmd *cmd, char **tokens, int i);
+int		treat_output_redirect(t_cmd *cmd, char **tokens, int i);
+int		treat_append_redirect(t_cmd *cmd, char **tokens, int i);
+int		treat_input_redirect(t_cmd *cmd, char **tokens, int i);
 void	remove_tokens(char **tokens, int start, int count);
 void	parse_redirections(t_cmd *cmd, char **tokens);
 void	rebuild_cmd_args(t_cmd *cmd, char **tokens);
 
-int		count_pipes_in_command(char *command);
+int		count_pipes(char *command);
 int		find_pipe_position(char *command, int start);
-char	*extract_command_part(char *command, int start, int end);
+char	*extract_command(char *command, int start, int end);
 int		execute_pipeline_loop(t_cmd *cmd, t_env *env);
 int		fork_and_execute(t_cmd *current, t_env *env, int prev_pipe_read);
 void	update_pipe(t_cmd *current, int *prev_pipe_read);
 int		wait_children(t_cmd *cmd);
-void	handle_double_quotes(t_tokenizer *tk);
-void	handle_single_quotes(t_tokenizer *tk);
+void	treat_double_quotes(t_tokenizer *tk);
+void	treat_single_quotes(t_tokenizer *tk);
 int		init_tokenizer(t_tokenizer *tk, char *input);
 void	create_token(t_tokenizer *tk);
-void	handle_quotes(t_tokenizer *tk);
-void	handle_outside(t_tokenizer *tk);
-void	handle_redirection_tokens(t_tokenizer *tk);
-void	handle_output_redirection_token(t_tokenizer *tk);
+void	detect_quotes(t_tokenizer *tk);
+void	treat_outside_quotes(t_tokenizer *tk);
+void	treat_redirection_tokens(t_tokenizer *tk);
+void	output_redir_token(t_tokenizer *tk);
 
 char	*expand_env_vars(char *input, t_env *env);
 int		take_var_name(char *input, int *pos, char **var_name);

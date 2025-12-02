@@ -12,7 +12,7 @@
 
 #include <minishell.h>
 
-static char	*handle_abs_path(char *cmd)
+static char	*treat_abs_path(char *cmd)
 {
 	int	i;
 
@@ -59,7 +59,7 @@ char	*get_cmd_path(char *cmd, t_env *env)
 
 	if (!cmd || !env)
 		return (NULL);
-	result = handle_abs_path(cmd);
+	result = treat_abs_path(cmd);
 	if (result != NULL)
 		return (result);
 	path_str = get_env(env, "PATH");

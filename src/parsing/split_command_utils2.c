@@ -17,7 +17,7 @@
 int	init_tokenizer(t_tokenizer *tk, char *input)
 {
 	tk->input = input;
-	tk->state = OUTSIDE;
+	tk->mode = OUTSIDE;
 	tk->buffer = malloc(sizeof(char) * 100);
 	if (!tk->buffer)
 		return (0);
@@ -44,26 +44,26 @@ void	create_token(t_tokenizer *tk)
 	}
 }
 
-void	handle_quotes(t_tokenizer *tk)
+void	detect_quotes(t_tokenizer *tk)
 {
 	if (tk->input[tk->pos_input] == '"')
 	{
-		tk->state = IN_DOUBLE_QUOTES;
+		tk->mode = IN_DOUBLE_QUOTES;
 		tk->pos_input++;
 	}
 	else if (tk->input[tk->pos_input] == '\'')
 	{
-		tk->state = IN_SINGLE_QUOTES;
+		tk->mode = IN_SINGLE_QUOTES;
 		tk->pos_input++;
 	}
 }
 
-void	handle_outside(t_tokenizer *tk)
+void	treat_outside_quotes(t_tokenizer *tk)
 {
-	if (tk->state != OUTSIDE)
+	if (tk->mode != OUTSIDE)
 		return ;
-	handle_quotes(tk);
-	if (tk->state != OUTSIDE)
+	detect_quotes(tk);
+	if (tk->mode != OUTSIDE)
 		return ;
 	if (tk->input[tk->pos_input] == ' ' || tk->input[tk->pos_input] == '\t')
 	{
@@ -72,27 +72,27 @@ void	handle_outside(t_tokenizer *tk)
 	}
 	else if (tk->input[tk->pos_input] == '>' || tk->input[tk->pos_input] == '<'
 		|| tk->input[tk->pos_input] == '|')
-		handle_redirection_tokens(tk);
+		treat_redirection_tokens(tk);
 	else
 		tk->buffer[tk->pos_buffer++] = tk->input[tk->pos_input++];
 }
 
-void	handle_redirection_tokens(t_tokenizer *tk)
+void	treat_redirection_tokens(t_tokenizer *tk)
 {
 	if (tk->input[tk->pos_input] == '>')
-		handle_output_redirection_token(tk);
+		output_redir_token(tk);
 	else if (tk->input[tk->pos_input] == '<')
 	{
 		create_token(tk);
-		tk->buffer[tk->pos_buffer++] = '<';
+		tk->tab[tk->pos_tab] = strdup("<");
+		tk->pos_tab++;
 		tk->pos_input++;
-		create_token(tk);
 	}
 	else if (tk->input[tk->pos_input] == '|')
 	{
 		create_token(tk);
-		tk->buffer[tk->pos_buffer++] = '|';
+		tk->tab[tk->pos_tab] = strdup("|");
+		tk->pos_tab++;
 		tk->pos_input++;
-		create_token(tk);
 	}
 }

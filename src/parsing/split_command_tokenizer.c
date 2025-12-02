@@ -22,9 +22,9 @@ char	**tokenizer(char *input)
 		return (NULL);
 	while (input[tk.pos_input] && tk.pos_tab < 99)
 	{
-		handle_outside(&tk);
-		handle_double_quotes(&tk);
-		handle_single_quotes(&tk);
+		treat_outside_quotes(&tk);
+		treat_double_quotes(&tk);
+		treat_single_quotes(&tk);
 	}
 	create_token(&tk);
 	tk.tab[tk.pos_tab] = NULL;

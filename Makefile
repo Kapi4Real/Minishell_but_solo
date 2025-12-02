@@ -30,8 +30,8 @@ SRC = src/main.c \
       src/exec/get_cmd_path.c \
       src/exec/get_env.c \
       src/exec/execute_external.c \
-      src/parsing/parser.c \
-      src/parsing/parser_utils.c \
+      src/parsing/parser_main.c \
+      src/parsing/parser_redirections.c \
       src/exec/manage_pipe.c \
       src/exec/manage_pipe2.c \
       src/exec/manage_pipe_utils.c \
@@ -49,13 +49,13 @@ $(LIBFT):
 
 $(NAME): $(OBJ) $(LIBFT)
 	$(CC) $(CFLAGS) $(OBJ) -L$(LIBFT_DIR) -lft -lreadline -o $(NAME)
-	@echo "✅ Minishell compiled!"
 
 %.o: %.c
 	$(CC) $(CFLAGS) -Iincludes -I$(LIBFT_DIR) -c $< -o $@
 
 clean:
 	$(RM) $(OBJ)
+	$(RM) src/parsing/*.o src/exec/*.o builtins/*.o src/*.o
 	@make -C $(LIBFT_DIR) clean
 
 fclean: clean

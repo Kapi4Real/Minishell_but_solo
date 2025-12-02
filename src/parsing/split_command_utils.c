@@ -12,7 +12,7 @@
 
 #include <minishell.h>
 
-int	count_pipes_in_command(char *command)
+int	count_pipes(char *command)
 {
 	int	i;
 	int	count;
@@ -50,7 +50,7 @@ int	find_pipe_position(char *command, int start)
 	return (i);
 }
 
-char	*extract_command_part(char *command, int start, int end)
+char	*extract_command(char *command, int start, int end)
 {
 	char	*part;
 	int		len;
