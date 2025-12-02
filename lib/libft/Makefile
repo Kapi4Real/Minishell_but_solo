@@ -60,7 +60,6 @@ SRC = ft_atoi.c \
 	  ft_isspace.c\
 	  ft_strspn.c\
 	  ft_strcspn.c\
-	  ft_strtok.c\
 	 	
 
 

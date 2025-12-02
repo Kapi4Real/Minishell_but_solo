@@ -14,6 +14,8 @@
 
 int	handle_output_redirect(t_cmd *cmd, char **tokens, int i)
 {
+	if (cmd->outfile)
+		free(cmd->outfile);
 	cmd->outfile = ft_strdup(tokens[i + 1]);
 	cmd->append = 0;
 	remove_tokens(tokens, i, 2);
@@ -22,6 +24,8 @@ int	handle_output_redirect(t_cmd *cmd, char **tokens, int i)
 
 int	handle_append_redirect(t_cmd *cmd, char **tokens, int i)
 {
+	if (cmd->outfile)
+		free(cmd->outfile);
 	cmd->outfile = ft_strdup(tokens[i + 1]);
 	cmd->append = 1;
 	remove_tokens(tokens, i, 2);
@@ -53,6 +57,8 @@ void	remove_tokens(char **tokens, int start, int count)
 
 int	handle_input_redirect(t_cmd *cmd, char **tokens, int i)
 {
+	if (cmd->infile)
+		free(cmd->infile);
 	cmd->infile = ft_strdup(tokens[i + 1]);
 	remove_tokens(tokens, i, 2);
 	return (i);

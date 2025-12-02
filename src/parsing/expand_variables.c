@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expand_variables.c                                 :+:      :+:    :+:   */
+/*   expand_variables_utils.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: student <student@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,53 +12,24 @@
 
 #include <minishell.h>
 
-static int	handle_braced_var(char *input, int *pos, char **var_name)
+void	copy_exit_status(char *result, int *j, t_env *env)
 {
-	int	start;
-	int	end;
+	char	*exit_str;
+	char	*temp;
+	int		exit_status;
 
-	(*pos)++;
-	start = *pos;
-	while (input[*pos] && input[*pos] != '}')
-		(*pos)++;
-	if (input[*pos] != '}')
-		return (0);
-	end = *pos;
-	if (end - start > 0)
-		*var_name = ft_substr(input, start, end - start);
-	else
-		*var_name = NULL;
-	if (*var_name == NULL)
-		return (0);
-	(*pos)++;
-	return (1);
+	exit_status = 0;
+	if (env)
+		exit_status = env->last_exit_status;
+	exit_str = ft_itoa(exit_status);
+	temp = exit_str;
+	while (*temp)
+		result[(*j)++] = *temp++;
+	free(exit_str);
 }
 
-static int	handle_simple_var(char *input, int *pos, char **var_name)
+void	copy_var_value(char *result, int *j, char *value)
 {
-	int	start;
-	int	end;
-
-	start = *pos;
-	while (input[*pos] && (ft_isalnum(input[*pos]) || input[*pos] == '_'))
-		(*pos)++;
-	end = *pos;
-	if ((ft_isalpha(input[start]) || input[start] == '_') && (end - start > 0))
-		*var_name = ft_substr(input, start, end - start);
-	else
-		*var_name = NULL;
-	if (*var_name == NULL)
-		return (0);
-	return (1);
-}
-
-int	take_var_name(char *input, int *pos, char **var_name)
-{
-	if (input[*pos] != '$')
-		return (0);
-	(*pos)++;
-	if (input[*pos] == '{')
-		return (handle_braced_var(input, pos, var_name));
-	else
-		return (handle_simple_var(input, pos, var_name));
+	while (*value)
+		result[(*j)++] = *value++;
 }

@@ -6,13 +6,13 @@ RM = rm -f
 SRC = src/main.c \
       src/shell_utils.c \
       src/signals.c \
-      src/parsing/split_command.c \
+      src/parsing/split_command_tokenizer.c \
       src/parsing/split_command_utils.c \
       src/parsing/split_command_utils2.c \
       src/parsing/split_command_utils3.c \
       src/parsing/expand_variables.c \
-      src/parsing/expand_variables_utils.c \
-      src/parsing/expand_variables_core.c \
+      src/parsing/expand_variables_utils1.c \
+      src/parsing/expand_variables_utils2.c \
       src/exec/exec_builtins.c \
       src/exec/pipe_utils.c \
       builtins/ft_echo.c \
