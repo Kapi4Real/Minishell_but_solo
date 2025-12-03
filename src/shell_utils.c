@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   shell_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: student <student@42.fr>                    +#+  +:+       +#+        */
+/*   By: ccouton <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/18 00:00:00 by student          #+#    #+#             */
-/*   Updated: 2025/11/18 00:00:00 by student         ###   ########.fr       */
+/*   Created: 2025/06/29 00:00:00 by ccouton           #+#    #+#             */
+/*   Updated: 2025/06/29 00:00:00 by ccouton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,16 +16,22 @@ static void	execute_command(char **args, t_env *env)
 {
 	t_cmd	*cmd;
 	int		exit_status;
+	char	**orig_args;
 
 	if (!args || !args[0])
 		return ;
+	orig_args = args;
 	cmd = parse_tokens(args);
 	if (!cmd)
+	{
+		free_args(orig_args);
 		return ;
+	}
 	exit_status = execute_pipeline(cmd, &env);
 	if (env)
 		env->last_exit_status = exit_status;
 	free_cmd(cmd);
+	free_args(orig_args);
 }
 
 void	free_args(char **args)
@@ -68,9 +74,6 @@ void	process_command(char *command, t_env *env)
 		return ;
 	args = tokenizer(expanded_command);
 	if (args)
-	{
 		execute_command(args, env);
-		free_args(args);
-	}
 	free(expanded_command);
 }

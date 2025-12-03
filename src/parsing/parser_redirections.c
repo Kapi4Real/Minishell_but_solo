@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser_utils.c                                     :+:      :+:    :+:   */
+/*   parser_redirections.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: student <student@42.fr>                    +#+  +:+       +#+        */
+/*   By: ccouton <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/18 00:00:00 by student          #+#    #+#             */
-/*   Updated: 2025/11/18 00:00:00 by student         ###   ########.fr       */
+/*   Created: 2025/06/29 00:00:00 by ccouton           #+#    #+#             */
+/*   Updated: 2025/06/29 00:00:00 by ccouton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ void	rebuild_cmd_args(t_cmd *cmd, char **tokens)
 	int	count;
 
 	count = 0;
-	while (tokens[count])
+	while (tokens[count] && ft_strcmp(tokens[count], "|") != 0)
 		count++;
 	if (cmd->args)
 		free_args(cmd->args);

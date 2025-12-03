@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser.c                                           :+:      :+:    :+:   */
+/*   parser_main.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: student <student@42.fr>                    +#+  +:+       +#+        */
+/*   By: ccouton <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/01 00:00:00 by student          #+#    #+#             */
-/*   Updated: 2025/01/01 00:00:00 by student         ###   ########.fr       */
+/*   Created: 2025/06/29 00:00:00 by ccouton           #+#    #+#             */
+/*   Updated: 2025/06/29 00:00:00 by ccouton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,6 @@ void	parse_redirections(t_cmd *cmd, char **tokens)
 
 static t_cmd	*manage_pipe(t_cmd *cmd, char **tokens, int *i, int *start)
 {
-	free(tokens[*i]);
-	tokens[*i] = NULL;
 	parse_redirections(cmd, &tokens[*start]);
 	rebuild_cmd_args(cmd, &tokens[*start]);
 	cmd->next = init_cmd();

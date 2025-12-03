@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expand_variables.c                                 :+:      :+:    :+:   */
+/*   expand_variables_utils1.c                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: student <student@42.fr>                    +#+  +:+       +#+        */
+/*   By: ccouton <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/25 00:00:00 by student          #+#    #+#             */
-/*   Updated: 2025/11/25 00:00:00 by student         ###   ########.fr       */
+/*   Created: 2025/06/29 00:00:00 by ccouton           #+#    #+#             */
+/*   Updated: 2025/06/29 00:00:00 by ccouton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,16 +39,25 @@ static int	treat_simple_var(char *input, int *pos, char **var_name)
 	int	start;
 	int	end;
 
+	if (!input || !pos || !var_name)
+		return (0);
 	start = *pos;
 	while (input[*pos] && (ft_isalnum(input[*pos]) || input[*pos] == '_'))
 		(*pos)++;
 	end = *pos;
-	if ((ft_isalpha(input[start]) || input[start] == '_') && (end - start > 0))
-		*var_name = ft_substr(input, start, end - start);
+	if ((ft_isalpha(input[start]) || input[start] == '_')
+		&& (end - start > 0) && (end - start < 200))
+	{
+		*var_name = malloc(end - start + 1);
+		if (!*var_name)
+			return (0);
+		ft_strlcpy(*var_name, input + start, end - start + 1);
+	}
 	else
+	{
 		*var_name = NULL;
-	if (*var_name == NULL)
 		return (0);
+	}
 	return (1);
 }
 

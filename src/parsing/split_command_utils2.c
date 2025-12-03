@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   split_command_extra.c                              :+:      :+:    :+:   */
+/*   split_command_utils2.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: student <student@42.fr>                    +#+  +:+       +#+        */
+/*   By: ccouton <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/18 00:00:00 by student          #+#    #+#             */
-/*   Updated: 2025/11/18 00:00:00 by student         ###   ########.fr       */
+/*   Created: 2025/06/29 00:00:00 by ccouton           #+#    #+#             */
+/*   Updated: 2025/06/29 00:00:00 by ccouton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,14 +83,16 @@ void	treat_redirection_tokens(t_tokenizer *tk)
 		output_redir_token(tk);
 	else if (tk->input[tk->pos_input] == '<')
 	{
-		create_token(tk);
+		if (tk->pos_buffer > 0)
+			create_token(tk);
 		tk->tab[tk->pos_tab] = strdup("<");
 		tk->pos_tab++;
 		tk->pos_input++;
 	}
 	else if (tk->input[tk->pos_input] == '|')
 	{
-		create_token(tk);
+		if (tk->pos_buffer > 0)
+			create_token(tk);
 		tk->tab[tk->pos_tab] = strdup("|");
 		tk->pos_tab++;
 		tk->pos_input++;

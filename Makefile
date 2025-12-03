@@ -13,6 +13,7 @@ SRC = src/main.c \
       src/parsing/expand_variables.c \
       src/parsing/expand_variables_utils1.c \
       src/parsing/expand_variables_utils2.c \
+      src/parsing/expand_variables_utils3.c \
       src/exec/exec_builtins.c \
       src/exec/pipe_utils.c \
       builtins/ft_echo.c \

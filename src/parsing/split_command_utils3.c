@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   split_command_utils3.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: student <student@42.fr>                    +#+  +:+       +#+        */
+/*   By: ccouton <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/18 00:00:00 by student          #+#    #+#             */
-/*   Updated: 2025/11/18 00:00:00 by student         ###   ########.fr       */
+/*   Created: 2025/06/29 00:00:00 by ccouton           #+#    #+#             */
+/*   Updated: 2025/06/29 00:00:00 by ccouton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,8 @@ void	treat_single_quotes(t_tokenizer *tk)
 
 void	output_redir_token(t_tokenizer *tk)
 {
-	create_token(tk);
+	if (tk->pos_buffer > 0)
+		create_token(tk);
 	if (tk->input[tk->pos_input + 1] == '>')
 	{
 		tk->tab[tk->pos_tab] = strdup(">>");

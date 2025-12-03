@@ -36,7 +36,10 @@ static int	export_with_value(char **args, t_env **env, int i)
 		existing->value = value;
 	}
 	else
+	{
 		ft_envadd_back(env, ft_envnew(key, value));
+		free(value);
+	}
 	free(key);
 	return (0);
 }

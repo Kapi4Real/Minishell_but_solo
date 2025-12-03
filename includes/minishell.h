@@ -98,6 +98,13 @@ void	setup_pipe(t_cmd *current, int prev_pipe_read);
 int		create_pipe(t_cmd *current);
 void	execute_child_process(t_cmd *current, t_env *env, int prev_pipe_read);
 
+void	handle_quotes(char c, int *in_single_quotes);
+void	detect_var(char *input, t_expand_data *data,
+			int in_single_quotes, t_env *env);
+void	copy_env_value(char *value, t_expand_data *data);
+void	process_exit(int *i, char *result, int *j, t_env *env);
+void	treat_variable(char *input, t_expand_data *data);
+
 int		ft_echo(char **args);
 int		ft_cd(char **args);
 int		ft_pwd(void);
