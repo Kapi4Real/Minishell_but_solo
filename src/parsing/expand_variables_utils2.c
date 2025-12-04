@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expand_variables_utils2.c                         :+:      :+:    :+:   */
+/*   expand_variables_utils3.c                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ccouton <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,35 +12,73 @@
 
 #include <minishell.h>
 
-static void	expand_loop(char *input, t_expand_data *data, t_env *env)
+void	handle_quotes(char c, int *in_single_quotes)
 {
-	int	i;
-	int	j;
-	int	in_single_quotes;
-
-	i = 0;
-	j = 0;
-	in_single_quotes = 0;
-	while (input[i])
-	{
-		handle_quotes(input[i], &in_single_quotes);
-		data->i = &i;
-		data->j = &j;
-		detect_var(input, data, in_single_quotes, env);
-	}
-	if (j >= 4095)
-		j = 4095;
-	data->result[j] = '\0';
+	if (c == '\'' && !*in_single_quotes)
+		*in_single_quotes = 1;
+	else if (c == '\'' && *in_single_quotes)
+		*in_single_quotes = 0;
 }
 
-char	*expand_env_vars(char *input, t_env *env)
+void	detect_var(char *input, t_expand_data *data,
+		int in_single_quotes, t_env *env)
 {
-	t_expand_data	data;
+	if (input[*data->i] == '\\' && input
+		[*data->i + 1] == '$' && !in_single_quotes)
+	{
+		(*data->i)++;
+		if (*data->j < 4000)
+			data->result[(*data->j)++] = input[(*data->i)++];
+	}
+	else if (input[*data->i] == '$' && input
+		[*data->i + 1] == '?' && !in_single_quotes)
+		process_exit(data->i, data->result, data->j, env);
+	else if (input[*data->i] == '$' && !in_single_quotes)
+		treat_variable(input, data);
+	else if (*data->j < 4000)
+		data->result[(*data->j)++] = input[(*data->i)++];
+	else
+		(*data->i)++;
+}
 
-	data.result = malloc(sizeof(char) * 4096);
-	if (!data.result)
-		return (NULL);
-	data.env = env;
-	expand_loop(input, &data, env);
-	return (data.result);
+void	copy_env_value(char *value, t_expand_data *data)
+{
+	int	i;
+
+	i = 0;
+	while (value[i] && i < 400 && *data->j < 3500)
+		data->result[(*data->j)++] = value[i++];
+}
+
+void	process_exit(int *i, char *result, int *j, t_env *env)
+{
+	copy_exit_status(result, j, env);
+	(*i) += 2;
+}
+
+void	treat_variable(char *input, t_expand_data *data)
+{
+	char	*var_name;
+	char	*value;
+	int		old_i;
+
+	var_name = NULL;
+	old_i = *data->i;
+	if (take_var_name(input, data->i, &var_name))
+	{
+		if (!var_name)
+		{
+			*data->i = old_i;
+			if (*data->j < 4000)
+				data->result[(*data->j)++] = input[(*data->i)++];
+			return ;
+		}
+		value = get_env(data->env, var_name);
+		if (value && *data->j < 3500)
+			copy_env_value(value, data);
+		free(var_name);
+	}
+	else
+		if (*data->j < 4000)
+			data->result[(*data->j)++] = input[(*data->i)++];
 }

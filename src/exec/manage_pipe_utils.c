@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   manage_pipe_utils.c                                :+:      :+:    :+:   */
+/*   pipe_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ccouton <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -11,64 +11,61 @@
 /* ************************************************************************** */
 
 #include <minishell.h>
-#include <fcntl.h>
 
-void	restore_redirections_parent(int saved_stdin, int saved_stdout)
+void	close_all_pipes(t_cmd *cmd)
 {
-	if (saved_stdin != -1)
+	t_cmd	*tmp;
+
+	tmp = cmd;
+	while (tmp)
 	{
-		dup2(saved_stdin, STDIN_FILENO);
-		close(saved_stdin);
-	}
-	if (saved_stdout != -1)
-	{
-		dup2(saved_stdout, STDOUT_FILENO);
-		close(saved_stdout);
+		if (tmp->pipe[0] > 2)
+			close(tmp->pipe[0]);
+		if (tmp->pipe[1] > 2)
+			close(tmp->pipe[1]);
+		tmp = tmp->next;
 	}
 }
 
-static int	setup_input_redir(t_cmd *cmd, int *saved_stdin)
+void	setup_pipe(t_cmd *current, int prev_pipe_read)
 {
-	int	fd;
-
-	*saved_stdin = dup(STDIN_FILENO);
-	fd = open(cmd->infile, O_RDONLY);
-	if (fd == -1)
+	if (prev_pipe_read != 0)
 	{
-		perror("minishell: input redirection");
-		return (1);
+		dup2(prev_pipe_read, STDIN_FILENO);
+		close(prev_pipe_read);
 	}
-	dup2(fd, STDIN_FILENO);
-	close(fd);
-	return (0);
+	if (current->next)
+	{
+		close(current->pipe[0]);
+		dup2(current->pipe[1], STDOUT_FILENO);
+		close(current->pipe[1]);
+	}
 }
 
-static int	setup_output_redir(t_cmd *cmd, int *saved_stdout)
+int	create_pipe(t_cmd *current)
 {
-	int	fd;
+	if (current->next)
+	{
+		if (pipe(current->pipe) == -1)
+		{
+			perror("minishell: pipe");
+			return (0);
+		}
+	}
+	return (1);
+}
 
-	*saved_stdout = dup(STDOUT_FILENO);
-	if (cmd->append)
-		fd = open(cmd->outfile, O_WRONLY | O_CREAT | O_APPEND, 0644);
+void	execute_child_process(t_cmd *current, t_env *env, int prev_pipe_read)
+{
+	int	ret;
+
+	setup_pipe(current, prev_pipe_read);
+	execute_redirections(current);
+	if (is_builtin(current->args))
+		exit(exec_builtins(current->args, &env));
 	else
-		fd = open(cmd->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (fd == -1)
 	{
-		perror("minishell: output redirection");
-		return (1);
+		ret = execute_external(current->args, env);
+		exit(ret);
 	}
-	dup2(fd, STDOUT_FILENO);
-	close(fd);
-	return (0);
-}
-
-int	apply_redirections(t_cmd *cmd, int *saved_stdin, int *saved_stdout)
-{
-	*saved_stdin = -1;
-	*saved_stdout = -1;
-	if (cmd->infile && setup_input_redir(cmd, saved_stdin))
-		return (1);
-	if (cmd->outfile && setup_output_redir(cmd, saved_stdout))
-		return (1);
-	return (0);
 }

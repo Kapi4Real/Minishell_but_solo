@@ -3,55 +3,78 @@
 /*                                                        :::      ::::::::   */
 /*   manage_pipe.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ccouton <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: kapi <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/29 00:00:00 by ccouton           #+#    #+#             */
-/*   Updated: 2025/06/29 00:00:00 by ccouton          ###   ########.fr       */
+/*   Created: 2025/12/04 00:00:00 by kapi              #+#    #+#             */
+/*   Updated: 2025/12/04 00:00:00 by kapi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <fcntl.h>
 
-static void	treat_input_execution(t_cmd *cmd)
+int	fork_and_execute(t_cmd *current, t_env *env, int prev_pipe_read)
 {
-	int	fd;
-
-	fd = open(cmd->infile, O_RDONLY);
-	if (fd == -1)
+	current->pid = fork();
+	if (current->pid == 0)
+		execute_child_process(current, env, prev_pipe_read);
+	else if (current->pid < 0)
 	{
-		ft_putstr_fd("minishell: ", 2);
-		ft_putstr_fd(cmd->infile, 2);
-		ft_putstr_fd(": No such file or directory\n", 2);
-		exit(1);
+		perror("minishell: fork");
+		return (0);
 	}
-	dup2(fd, STDIN_FILENO);
-	close(fd);
+	return (1);
 }
 
-static void	treat_output_execution(t_cmd *cmd)
+void	update_pipe(t_cmd *current, int *prev_pipe_read)
 {
-	int	fd;
-
-	if (cmd->append)
-		fd = open(cmd->outfile, O_WRONLY | O_CREAT | O_APPEND, 0644);
+	if (*prev_pipe_read != 0)
+		close(*prev_pipe_read);
+	if (current->next)
+	{
+		close(current->pipe[1]);
+		*prev_pipe_read = current->pipe[0];
+	}
 	else
-		fd = open(cmd->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (fd == -1)
-	{
-		ft_putstr_fd("minishell: ", 2);
-		ft_putstr_fd(cmd->outfile, 2);
-		ft_putstr_fd(": Permission denied\n", 2);
-		exit(1);
-	}
-	dup2(fd, STDOUT_FILENO);
-	close(fd);
+		*prev_pipe_read = 0;
 }
 
-void	execute_redirections(t_cmd *cmd)
+int	wait_children(t_cmd *cmd)
 {
-	if (cmd->infile)
-		treat_input_execution(cmd);
-	if (cmd->outfile)
-		treat_output_execution(cmd);
+	int		status;
+	int		last_status;
+	t_cmd	*current;
+
+	current = cmd;
+	last_status = 0;
+	while (current)
+	{
+		waitpid(current->pid, &status, 0);
+		if (!current->next)
+			last_status = WEXITSTATUS(status);
+		current = current->next;
+	}
+	return (last_status);
+}
+
+int	execute_pipeline(t_cmd *cmd, t_env **env)
+{
+	int	saved_stdin;
+	int	saved_stdout;
+	int	result;
+
+	if (!cmd)
+		return (1);
+	if (!cmd->next && is_builtin(cmd->args))
+	{
+		saved_stdin = -1;
+		saved_stdout = -1;
+		if (apply_redirections(cmd, &saved_stdin, &saved_stdout) != 0)
+			return (1);
+		result = exec_builtins(cmd->args, env);
+		restore_fd(saved_stdin, saved_stdout);
+		return (result);
+	}
+	result = execute_pipeline_loop(cmd, *env);
+	close_all_pipes(cmd);
+	return (result);
 }

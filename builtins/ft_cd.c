@@ -12,11 +12,14 @@
 
 #include <minishell.h>
 
-int	ft_cd(char **args)
+int	ft_cd(char **args, t_env *env)
 {
+	char	*home;
+
 	if (!args[1] || ft_strcmp(args[1], "~") == 0)
 	{
-		if (chdir(getenv("HOME")) != 0)
+		home = get_env(env, "HOME");
+		if (!home || chdir(home) != 0)
 		{
 			perror("cd");
 			return (1);

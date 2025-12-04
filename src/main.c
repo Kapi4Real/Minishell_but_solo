@@ -25,7 +25,7 @@ static void	run_shell_loop(t_env *env)
 			break ;
 		}
 		g_signal_received = 0;
-		if (strcmp(command, "exit") == 0)
+		if (ft_strcmp(command, "exit") == 0)
 		{
 			free(command);
 			break ;

@@ -21,6 +21,7 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 # include "libft.h"
+# include <sys/wait.h>    // waitpid, WEXITSTATUS
 
 typedef struct s_env
 {
@@ -92,10 +93,10 @@ t_cmd	*parse_tokens(char **tokens);
 
 void	execute_redirections(t_cmd *cmd);
 int		apply_redirections(t_cmd *cmd, int *saved_stdin, int *saved_stdout);
-void	restore_redirections_parent(int saved_stdin, int saved_stdout);
 void	close_all_pipes(t_cmd *cmd);
 void	setup_pipe(t_cmd *current, int prev_pipe_read);
 int		create_pipe(t_cmd *current);
+void	restore_fd(int saved_stdin, int saved_stdout);
 void	execute_child_process(t_cmd *current, t_env *env, int prev_pipe_read);
 
 void	handle_quotes(char c, int *in_single_quotes);
@@ -106,7 +107,7 @@ void	process_exit(int *i, char *result, int *j, t_env *env);
 void	treat_variable(char *input, t_expand_data *data);
 
 int		ft_echo(char **args);
-int		ft_cd(char **args);
+int		ft_cd(char **args, t_env *env);
 int		ft_pwd(void);
 int		ft_export(char **args, t_env **env);
 int		ft_unset(char **args, t_env **env);

@@ -11,11 +11,11 @@ SRC = src/main.c \
       src/parsing/split_command_utils2.c \
       src/parsing/split_command_utils3.c \
       src/parsing/expand_variables.c \
+      src/parsing/take_var_name.c \
       src/parsing/expand_variables_utils1.c \
       src/parsing/expand_variables_utils2.c \
-      src/parsing/expand_variables_utils3.c \
       src/exec/exec_builtins.c \
-      src/exec/pipe_utils.c \
+      src/exec/manage_pipe_utils.c \
       builtins/ft_echo.c \
       builtins/ft_cd.c \
       builtins/ft_pwd.c \
@@ -33,10 +33,10 @@ SRC = src/main.c \
       src/exec/execute_external.c \
       src/parsing/parser_main.c \
       src/parsing/parser_redirections.c \
+      src/exec/manage_redirection.c \
+      src/exec/setup_redirection.c \
       src/exec/manage_pipe.c \
-      src/exec/manage_pipe2.c \
-      src/exec/manage_pipe_utils.c \
-      src/exec/manage_pipe2_utils.c
+      src/exec/manage_redirection_utils.c \
 
 OBJ = $(SRC:.c=.o)
 

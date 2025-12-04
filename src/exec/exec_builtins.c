@@ -19,7 +19,7 @@ int	exec_builtins(char **args, t_env **env)
 	if (ft_strcmp(args[0], "echo") == 0)
 		return (ft_echo(args));
 	else if (ft_strcmp(args[0], "cd") == 0)
-		return (ft_cd(args));
+		return (ft_cd(args, *env));
 	else if (ft_strcmp(args[0], "pwd") == 0)
 		return (ft_pwd());
 	else if (ft_strcmp(args[0], "export") == 0)
