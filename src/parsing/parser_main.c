@@ -43,6 +43,7 @@ void	parse_redirections(t_cmd *cmd, char **tokens)
 static t_cmd	*manage_pipe(t_cmd *cmd, char **tokens, int *i, int *start)
 {
 	parse_redirections(cmd, &tokens[*start]);
+	rebuild_cmd_args(cmd, &tokens[*start]);
 	cmd->next = init_cmd();
 	(*i)++;
 	*start = *i;

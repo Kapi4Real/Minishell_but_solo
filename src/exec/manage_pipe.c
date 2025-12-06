@@ -56,25 +56,38 @@ int	wait_children(t_cmd *cmd)
 	return (last_status);
 }
 
-int	execute_pipeline(t_cmd *cmd, t_env **env)
+int execute_pipeline(t_cmd *cmd, t_env **env)
 {
-	int	saved_stdin;
-	int	saved_stdout;
-	int	result;
+	int prev_pipe_read = 0;
+	t_cmd *current = cmd;
+	int result = 0;
 
-	if (!cmd)
-		return (1);
-	if (!cmd->next && is_builtin(cmd->args))
+	while (current)
 	{
-		saved_stdin = -1;
-		saved_stdout = -1;
-		if (apply_redirections(cmd, &saved_stdin, &saved_stdout) != 0)
+		if (current->next)
+		{
+			if (pipe(current->pipe) == -1)
+			{
+				perror("minishell: pipe");
+				return (1);
+			}
+		}
+		if (!fork_and_execute(current, *env, prev_pipe_read))
 			return (1);
-		result = exec_builtins(cmd->args, env);
-		restore_fd(saved_stdin, saved_stdout);
-		return (result);
+		if (prev_pipe_read != 0)
+			close(prev_pipe_read);
+		if (current->next)
+		{
+			close(current->pipe[1]);
+			prev_pipe_read = current->pipe[0];
+		}
+		else
+		{
+			prev_pipe_read = 0;
+		}
+		current = current->next;
 	}
-	result = execute_pipeline_loop(cmd, *env);
+	result = wait_children(cmd);
 	close_all_pipes(cmd);
 	return (result);
 }

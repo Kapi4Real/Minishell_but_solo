@@ -27,7 +27,7 @@ void	close_all_pipes(t_cmd *cmd)
 	}
 }
 
-void	setup_pipe(t_cmd *current, int prev_pipe_read)
+void setup_pipe(t_cmd *current, int prev_pipe_read)
 {
 	if (prev_pipe_read != 0 && !current->infile)
 	{
@@ -59,8 +59,8 @@ void	execute_child_process(t_cmd *current, t_env *env, int prev_pipe_read)
 {
 	int	ret;
 
-	execute_redirections(current);
 	setup_pipe(current, prev_pipe_read);
+	execute_redirections(current);
 	if (is_builtin(current->args))
 		exit(exec_builtins(current->args, &env));
 	else
