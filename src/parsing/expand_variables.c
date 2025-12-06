@@ -43,11 +43,17 @@ void	copy_var_value(char *result, int *j, char *value)
 void	expand_tokens(char **tokens, t_env *env)
 {
 	int	i;
+	char *new;
 
 	i = 0;
 	while (tokens[i])
 	{
-		tokens[i] = expand_env_vars(tokens[i], env);
+		new = expand_env_vars(tokens[i], env);
+		if (new)
+		{
+			free(tokens[i]);
+			tokens[i] = new;
+		}
 		i++;
 	}
 }

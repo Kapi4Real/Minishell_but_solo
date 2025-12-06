@@ -76,7 +76,7 @@ char	*extract_command(char *command, int start, int end)
 
 void	create_token(t_tokenizer *tk)
 {
-	if (tk->pos_buffer > 0)
+	if (tk->pos_buffer > 0 && tk->pos_tab < 99)
 	{
 		tk->buffer[tk->pos_buffer] = '\0';
 		tk->tab[tk->pos_tab] = strdup(tk->buffer);
