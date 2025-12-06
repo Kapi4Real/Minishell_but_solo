@@ -18,7 +18,7 @@ int	ft_cd(char **args, t_env *env)
 
 	if (!args[1] || ft_strcmp(args[1], "~") == 0)
 	{
-		home = get_env(env, "HOME");
+		home = get_env("HOME", env);
 		if (!home || chdir(home) != 0)
 		{
 			perror("cd");

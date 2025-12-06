@@ -62,7 +62,7 @@ char	*get_cmd_path(char *cmd, t_env *env)
 	result = treat_abs_path(cmd);
 	if (result != NULL)
 		return (result);
-	path_str = get_env(env, "PATH");
+	path_str = get_env("PATH", env);
 	if (!path_str)
 		return (NULL);
 	dirs = ft_split(path_str, ':');

@@ -24,6 +24,7 @@ SRC = src/main.c \
       builtins/ft_export.c \
       builtins/ft_unset.c \
       src/exec/init_env.c \
+      src/exec/env_utils.c \
       src/parsing/init_cmd.c \
       src/parsing/remove_quotes.c \
       src/parsing/add_arg_cmd.c \
@@ -38,6 +39,7 @@ SRC = src/main.c \
       src/exec/manage_pipe.c \
         src/exec/manage_redirection_utils.c \
         src/parsing/parser_main_utils.c \
+    	src/parsing/heredoc.c \
 
 OBJ = $(SRC:.c=.o)
 

@@ -48,17 +48,14 @@ static int	treat_simple_var(char *input, int *pos, char **var_name)
 	if ((ft_isalpha(input[start]) || input[start] == '_')
 		&& (end - start > 0) && (end - start < 200))
 	{
-		*var_name = malloc(end - start + 1);
-		if (!*var_name)
-			return (0);
-		ft_strlcpy(*var_name, input + start, end - start + 1);
+		*var_name = ft_substr(input, start, end - start);
+		return (*var_name != NULL);
 	}
 	else
 	{
 		*var_name = NULL;
 		return (0);
 	}
-	return (1);
 }
 
 int	take_var_name(char *input, int *pos, char **var_name)

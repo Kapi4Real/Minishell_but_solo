@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <minishell.h>
+#include "minishell.h"
 #include <fcntl.h>
 
 void	parse_redirections(t_cmd *cmd, char **tokens)
@@ -22,7 +22,11 @@ void	parse_redirections(t_cmd *cmd, char **tokens)
 	{
 		if (!tokens[i + 1])
 			break ;
-		if (ft_strcmp(tokens[i], ">") == 0)
+		if (ft_strcmp(tokens[i], "<<") == 0)
+		{
+			i = heredoc_redirect(cmd, tokens, i);
+		}
+		else if (ft_strcmp(tokens[i], ">") == 0)
 		{
 			create_file_redir(tokens, i);
 			i = treat_output_redirect(cmd, tokens, i);
@@ -39,7 +43,6 @@ void	parse_redirections(t_cmd *cmd, char **tokens)
 static t_cmd	*manage_pipe(t_cmd *cmd, char **tokens, int *i, int *start)
 {
 	parse_redirections(cmd, &tokens[*start]);
-	rebuild_cmd_args(cmd, &tokens[*start]);
 	cmd->next = init_cmd();
 	(*i)++;
 	*start = *i;
@@ -48,7 +51,19 @@ static t_cmd	*manage_pipe(t_cmd *cmd, char **tokens, int *i, int *start)
 
 static void	finalize_command(t_cmd *cmd, char **tokens, int start)
 {
+	int	k;
+
 	parse_redirections(cmd, &tokens[start]);
+	k = 0;
+	while (tokens[start + k])
+	{
+		if (ft_strcmp(tokens[start + k], "<<") == 0)
+		{
+			remove_tokens(&tokens[start], k, 2);
+			continue;
+		}
+		k++;
+	}
 	rebuild_cmd_args(cmd, &tokens[start]);
 }
 

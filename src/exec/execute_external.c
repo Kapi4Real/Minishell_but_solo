@@ -15,6 +15,8 @@
 int	execute_external(char **args, t_env *env)
 {
 	char	*full_path;
+	char	**envp;
+	int		i;
 
 	full_path = NULL;
 	if (!args || !args[0])
@@ -27,8 +29,18 @@ int	execute_external(char **args, t_env *env)
 		ft_putstr_fd(": command not found\n", 2);
 		return (127);
 	}
-	execve(full_path, args, NULL);
+	envp = env_to_array(env);
+	if (!envp)
+	{
+		free(full_path);
+		return (126);
+	}
+	execve(full_path, args, envp);
 	perror("minishell: execve");
 	free(full_path);
+	i = 0;
+	while (envp[i])
+		free(envp[i++]);
+	free(envp);
 	return (126);
 }

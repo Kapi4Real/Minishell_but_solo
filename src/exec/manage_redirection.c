@@ -50,8 +50,16 @@ static void	treat_output_execution(t_cmd *cmd)
 
 void	execute_redirections(t_cmd *cmd)
 {
-	if (cmd->infile)
+	if (cmd->heredoc_fd >= 0)
+	{
+		dup2(cmd->heredoc_fd, STDIN_FILENO);
+		close(cmd->heredoc_fd);
+		cmd->heredoc_fd = -1;
+	}
+	else if (cmd->infile)
+	{
 		treat_input_execution(cmd);
+	}
 	if (cmd->outfile)
 		treat_output_execution(cmd);
 }

@@ -55,7 +55,6 @@ int	create_pipe(t_cmd *current)
 	return (1);
 }
 
-
 void	execute_child_process(t_cmd *current, t_env *env, int prev_pipe_read)
 {
 	int	ret;

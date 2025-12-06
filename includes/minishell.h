@@ -25,20 +25,22 @@
 
 void	create_file_redir(char **tokens, int i);
 
+
+
 typedef struct s_env
 {
 	char			*name;
 	char			*value;
 	int				last_exit_status;
 	struct s_env	*next;
-}	t_env;
+} t_env;
 
 typedef enum e_token_state
 {
 	OUTSIDE,
 	IN_DOUBLE_QUOTES,
 	IN_SINGLE_QUOTES
-}	t_token_mode;
+} t_token_mode;
 
 typedef struct s_tokenizer
 {
@@ -49,7 +51,7 @@ typedef struct s_tokenizer
 	int				pos_input;
 	int				pos_buffer;
 	int				pos_tab;
-}	t_tokenizer;
+} t_tokenizer;
 
 typedef struct s_token
 {
@@ -66,8 +68,9 @@ typedef struct s_cmd
 	int				append;
 	int				pipe[2];
 	int				pid;
+	int				heredoc_fd;
 	struct s_cmd	*next;
-}	t_cmd;
+} t_cmd;
 
 typedef struct s_expand_data
 {
@@ -77,14 +80,15 @@ typedef struct s_expand_data
 	t_env	*env;
 }	t_expand_data;
 
-t_token	*tokenize(char *input);
+int heredoc_redirect(t_cmd *cmd, char **tokens, int i);
 t_cmd	*parse(t_token *tokens);
 char	*remove_quotes(char *token);
 t_cmd	*init_cmd(void);
 void	add_arg_cmd(t_cmd *cmd, char *arg);
 void	free_cmd(t_cmd *cmd);
 
-char	**tokenizer(char *input);
+char	**tokenizer(char *input, t_env *env);
+void	expand_tokens(char **tokens, t_env *env);
 
 int		execute(t_cmd *commands);
 int		exec_builtins(char **args, t_env **env);
@@ -120,7 +124,7 @@ t_env	*ft_envnew(char *key, char *value);
 void	ft_envadd_back(t_env **env, t_env *new);
 int		ft_env(t_env *env);
 void	ft_envclear(t_env **env);
-char	*get_env(t_env *env, char *key);
+char	*get_env(char *key, t_env *env);
 char	*get_cmd_path(char *cmd, t_env *env);
 
 void	free_commands(t_cmd *commands);
@@ -159,6 +163,9 @@ char	*expand_env_vars(char *input, t_env *env);
 int		take_var_name(char *input, int *pos, char **var_name);
 void	copy_exit_status(char *result, int *j, t_env *env);
 void	copy_var_value(char *result, int *j, char *value);
+
+char	**env_to_array(t_env *env);
+void	free_env_array(char **envp);
 
 extern volatile sig_atomic_t	g_signal_received;
 

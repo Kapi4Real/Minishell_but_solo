@@ -73,7 +73,7 @@ void	treat_variable(char *input, t_expand_data *data)
 				data->result[(*data->j)++] = input[(*data->i)++];
 			return ;
 		}
-		value = get_env(data->env, var_name);
+		value = get_env(var_name, data->env);
 		if (value && *data->j < 3500)
 			copy_env_value(value, data);
 		free(var_name);

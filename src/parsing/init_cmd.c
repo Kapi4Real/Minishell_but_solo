@@ -25,6 +25,8 @@ t_cmd	*init_cmd(void)
 	cmd->append = 0;
 	cmd->pipe[0] = -1;
 	cmd->pipe[1] = -1;
+	cmd->pid = 0;
+	cmd->heredoc_fd = -1;
 	cmd->next = NULL;
 	return (cmd);
 }

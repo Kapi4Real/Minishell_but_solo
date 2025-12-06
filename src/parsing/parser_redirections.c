@@ -68,6 +68,7 @@ void	rebuild_cmd_args(t_cmd *cmd, char **tokens)
 {
 	int	i;
 	int	count;
+	int	j;
 
 	count = 0;
 	while (tokens[count] && ft_strcmp(tokens[count], "|") != 0)
@@ -76,10 +77,17 @@ void	rebuild_cmd_args(t_cmd *cmd, char **tokens)
 		free_args(cmd->args);
 	cmd->args = malloc(sizeof(char *) * (count + 1));
 	i = 0;
+	j = 0;
 	while (i < count)
 	{
-		cmd->args[i] = ft_strdup(tokens[i]);
+		if (ft_strcmp(tokens[i], "<<") == 0)
+		{
+			i += 2;
+			continue;
+		}
+		cmd->args[j] = ft_strdup(tokens[i]);
+		j++;
 		i++;
 	}
-	cmd->args[count] = NULL;
+	cmd->args[j] = NULL;
 }

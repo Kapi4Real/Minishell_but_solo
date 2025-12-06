@@ -39,3 +39,15 @@ void	copy_var_value(char *result, int *j, char *value)
 		len++;
 	}
 }
+
+void	expand_tokens(char **tokens, t_env *env)
+{
+	int	i;
+
+	i = 0;
+	while (tokens[i])
+	{
+		tokens[i] = expand_env_vars(tokens[i], env);
+		i++;
+	}
+}

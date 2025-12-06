@@ -69,11 +69,8 @@ void	process_command(char *command, t_env *env)
 
 	if (ft_strlen(command) > 0)
 		add_history(command);
-	expanded_command = expand_env_vars(command, env);
-	if (!expanded_command)
-		return ;
-	args = tokenizer(expanded_command);
+	expanded_command = command;
+	args = tokenizer(expanded_command, env);
 	if (args)
 		execute_command(args, env);
-	free(expanded_command);
 }

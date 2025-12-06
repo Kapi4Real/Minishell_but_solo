@@ -14,7 +14,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-char	**tokenizer(char *input)
+char	**tokenizer(char *input, t_env *env)
 {
 	t_tokenizer	tk;
 
@@ -28,6 +28,7 @@ char	**tokenizer(char *input)
 	}
 	create_token(&tk);
 	tk.tab[tk.pos_tab] = NULL;
+	expand_tokens(tk.tab, env);
 	free(tk.buffer);
 	return (tk.tab);
 }

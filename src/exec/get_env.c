@@ -12,7 +12,7 @@
 
 #include <minishell.h>
 
-char	*get_env(t_env *env, char *key)
+char	*get_env(char *key, t_env *env)
 {
 	t_env	*current;
 
