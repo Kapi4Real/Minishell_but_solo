@@ -1,30 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   init_cmd.c                                         :+:      :+:    :+:   */
+/*   parser_main_utils.h                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ccouton <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/29 00:00:00 by ccouton           #+#    #+#             */
-/*   Updated: 2025/06/29 00:00:00 by ccouton          ###   ########.fr       */
+/*   Created: 2025/12/06 00:00:00 by ccouton           #+#    #+#             */
+/*   Updated: 2025/12/06 00:00:00 by ccouton          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <minishell.h>
+#ifndef PARSER_MAIN_UTILS_H
+# define PARSER_MAIN_UTILS_H
 
-t_cmd	*init_cmd(void)
-{
-	t_cmd	*cmd;
+void	create_file_redir(char **tokens, int i);
 
-	cmd = malloc(sizeof(t_cmd));
-	if (!cmd)
-		return (NULL);
-	cmd->args = NULL;
-	cmd->infile = NULL;
-	cmd->outfile = NULL;
-	cmd->append = 0;
-	cmd->pipe[0] = -1;
-	cmd->pipe[1] = -1;
-	cmd->next = NULL;
-	return (cmd);
-}
+#endif

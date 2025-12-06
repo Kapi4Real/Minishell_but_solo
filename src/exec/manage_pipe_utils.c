@@ -29,7 +29,7 @@ void	close_all_pipes(t_cmd *cmd)
 
 void	setup_pipe(t_cmd *current, int prev_pipe_read)
 {
-	if (prev_pipe_read != 0)
+	if (prev_pipe_read != 0 && !current->infile)
 	{
 		dup2(prev_pipe_read, STDIN_FILENO);
 		close(prev_pipe_read);
@@ -55,12 +55,13 @@ int	create_pipe(t_cmd *current)
 	return (1);
 }
 
+
 void	execute_child_process(t_cmd *current, t_env *env, int prev_pipe_read)
 {
 	int	ret;
 
-	setup_pipe(current, prev_pipe_read);
 	execute_redirections(current);
+	setup_pipe(current, prev_pipe_read);
 	if (is_builtin(current->args))
 		exit(exec_builtins(current->args, &env));
 	else

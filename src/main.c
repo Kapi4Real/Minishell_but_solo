@@ -12,25 +12,51 @@
 
 #include <minishell.h>
 
+static int	is_only_spaces(const char *command)
+{
+	int	j;
+
+	j = 0;
+	while (command && command[j])
+	{
+		if (!ft_isspace(command[j]))
+			return (0);
+		j++;
+	}
+	return (1);
+}
+
+static int	is_exit_command(char *command)
+{
+	if (ft_strcmp(command, "exit") == 0)
+		return (1);
+	return (0);
+}
+
 static void	run_shell_loop(t_env *env)
 {
 	char	*command;
 
 	while (1)
 	{
-		command = readline("minishell> ");
+		command = NULL;
+		if (isatty(STDIN_FILENO))
+			command = readline("minishell> ");
+		else
+			command = readline("");
 		if (command == NULL)
 		{
 			printf("exit\n");
 			break ;
 		}
 		g_signal_received = 0;
-		if (ft_strcmp(command, "exit") == 0)
+		if (is_exit_command(command))
 		{
 			free(command);
 			break ;
 		}
-		process_command(command, env);
+		if (!is_only_spaces(command) && command && ft_strlen(command) > 0)
+			process_command(command, env);
 		free(command);
 	}
 }

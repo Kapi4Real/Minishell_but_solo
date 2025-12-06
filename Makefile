@@ -36,7 +36,8 @@ SRC = src/main.c \
       src/exec/manage_redirection.c \
       src/exec/setup_redirection.c \
       src/exec/manage_pipe.c \
-      src/exec/manage_redirection_utils.c \
+        src/exec/manage_redirection_utils.c \
+        src/parsing/parser_main_utils.c \
 
 OBJ = $(SRC:.c=.o)
 

@@ -23,6 +23,8 @@
 # include "libft.h"
 # include <sys/wait.h>    // waitpid, WEXITSTATUS
 
+void	create_file_redir(char **tokens, int i);
+
 typedef struct s_env
 {
 	char			*name;

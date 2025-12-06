@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include <minishell.h>
+#include <fcntl.h>
 
 void	parse_redirections(t_cmd *cmd, char **tokens)
 {
@@ -22,7 +23,10 @@ void	parse_redirections(t_cmd *cmd, char **tokens)
 		if (!tokens[i + 1])
 			break ;
 		if (ft_strcmp(tokens[i], ">") == 0)
+		{
+			create_file_redir(tokens, i);
 			i = treat_output_redirect(cmd, tokens, i);
+		}
 		else if (ft_strcmp(tokens[i], ">>") == 0)
 			i = treat_append_redirect(cmd, tokens, i);
 		else if (ft_strcmp(tokens[i], "<") == 0)
