@@ -83,7 +83,7 @@ void	rebuild_cmd_args(t_cmd *cmd, char **tokens)
 		if (ft_strcmp(tokens[i], "<<") == 0)
 		{
 			i += 2;
-			continue;
+			continue ;
 		}
 		cmd->args[j] = ft_strdup(tokens[i]);
 		j++;

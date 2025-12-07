@@ -56,35 +56,44 @@ int	wait_children(t_cmd *cmd)
 	return (last_status);
 }
 
-int execute_pipeline(t_cmd *cmd, t_env **env)
+static int	exec_cmd(t_cmd *current, t_env **env, int *prev_pipe_read)
 {
-	int prev_pipe_read = 0;
-	t_cmd *current = cmd;
-	int result = 0;
+	if (current->next)
+	{
+		if (pipe(current->pipe) == -1)
+		{
+			perror("minishell: pipe");
+			return (0);
+		}
+	}
+	if (!fork_and_execute(current, *env, *prev_pipe_read))
+		return (0);
+	if (*prev_pipe_read != 0)
+		close(*prev_pipe_read);
+	if (current->next)
+	{
+		close(current->pipe[1]);
+		*prev_pipe_read = current->pipe[0];
+	}
+	else
+	{
+		*prev_pipe_read = 0;
+	}
+	return (1);
+}
 
+int	execute_pipeline(t_cmd *cmd, t_env **env)
+{
+	int		prev_pipe_read;
+	t_cmd	*current;
+	int		result;
+
+	prev_pipe_read = 0;
+	current = cmd;
 	while (current)
 	{
-		if (current->next)
-		{
-			if (pipe(current->pipe) == -1)
-			{
-				perror("minishell: pipe");
-				return (1);
-			}
-		}
-		if (!fork_and_execute(current, *env, prev_pipe_read))
+		if (!exec_cmd(current, env, &prev_pipe_read))
 			return (1);
-		if (prev_pipe_read != 0)
-			close(prev_pipe_read);
-		if (current->next)
-		{
-			close(current->pipe[1]);
-			prev_pipe_read = current->pipe[0];
-		}
-		else
-		{
-			prev_pipe_read = 0;
-		}
 		current = current->next;
 	}
 	result = wait_children(cmd);

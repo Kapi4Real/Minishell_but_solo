@@ -24,7 +24,7 @@ void	parse_redirections(t_cmd *cmd, char **tokens)
 			break ;
 		if (ft_strcmp(tokens[i], "<<") == 0)
 		{
-			i = heredoc_redirect(cmd, tokens, i);
+			i = heredoc_redir(cmd, tokens, i);
 		}
 		else if (ft_strcmp(tokens[i], ">") == 0)
 		{
@@ -61,7 +61,7 @@ static void	finalize_command(t_cmd *cmd, char **tokens, int start)
 		if (ft_strcmp(tokens[start + k], "<<") == 0)
 		{
 			remove_tokens(&tokens[start], k, 2);
-			continue;
+			continue ;
 		}
 		k++;
 	}

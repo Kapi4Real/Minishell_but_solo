@@ -11,28 +11,7 @@
 /* ************************************************************************** */
 
 #include <readline/readline.h>
-#include <unistd.h>
-#include <string.h>
-#include <stdlib.h>
 #include "minishell.h"
-
-static char	*supp_space(const char *str)
-{
-	char	*res;
-	size_t	len;
-
-	while (*str == ' ' || *str == '\t')
-		str++;
-	len = strlen(str);
-	while (len > 0 && (str[len - 1] == ' ' || str[len - 1] == '\t'))
-		len--;
-	res = malloc(len + 1);
-	if (!res)
-		return (NULL);
-	strncpy(res, str, len);
-	res[len] = '\0';
-	return (res);
-}
 
 static void	read_heredoc(int pipe_fd, char *exit_word)
 {
@@ -44,7 +23,7 @@ static void	read_heredoc(int pipe_fd, char *exit_word)
 		line = readline("> ");
 		if (!line)
 			break ;
-		deleted = supp_space(line);
+		deleted = ft_strtrim(line, " \t");
 		if (deleted && strcmp(deleted, exit_word) == 0)
 		{
 			free(deleted);
@@ -58,7 +37,7 @@ static void	read_heredoc(int pipe_fd, char *exit_word)
 	}
 }
 
-int	heredoc_redirect(t_cmd *cmd, char **tokens, int i)
+int	heredoc_redir(t_cmd *cmd, char **tokens, int i)
 {
 	int		pipe_heredoc[2];
 	char	*exit_word;

@@ -12,55 +12,52 @@
 
 #include <minishell.h>
 
-static int	env_list_size(t_env *env)
+static int	env_array_loop(char **tab_env, t_env *env)
 {
-	int	size;
+	int		i;
+	t_env	*tmp;
 
-	size = 0;
-	while (env)
+	i = 0;
+	tmp = env;
+	while (tmp)
 	{
-		size++;
-		env = env->next;
+		tab_env[i] = ft_strjoin3(tmp->name, "=", tmp->value);
+		if (!tab_env[i])
+		{
+			while (i--)
+				free(tab_env[i]);
+			return (0);
+		}
+		i++;
+		tmp = tmp->next;
 	}
-	return (size);
+	tab_env[i] = NULL;
+	return (1);
 }
 
 char	**env_to_array(t_env *env)
 {
 	int		size;
-	char	**arr;
-	int		i;
-	t_env	*tmp;
+	char	**tab_env;
 
-	size = env_list_size(env);
-	arr = malloc(sizeof(char *) * (size + 1));
-	if (!arr)
+	size = ft_lstsize((t_list *)env);
+	tab_env = malloc(sizeof(char *) * (size + 1));
+	if (!tab_env)
 		return (NULL);
-	i = 0;
-	tmp = env;
-	while (tmp)
+	if (!env_array_loop(tab_env, env))
 	{
-		arr[i] = ft_strjoin3(tmp->name, "=", tmp->value);
-		if (!arr[i])
-		{
-			while (i--)
-				free(arr[i]);
-			free(arr);
-			return (NULL);
-		}
-		i++;
-		tmp = tmp->next;
+		free(tab_env);
+		return (NULL);
 	}
-	arr[i] = NULL;
-	return (arr);
+	return (tab_env);
 }
 
-void	free_env_array(char **envp)
+void	free_env_array(char **env)
 {
 	int	i;
 
 	i = 0;
-	while (envp[i])
-		free(envp[i++]);
-	free(envp);
+	while (env[i])
+		free(env[i++]);
+	free(env);
 }

@@ -11,8 +11,6 @@
 /* ************************************************************************** */
 
 #include <minishell.h>
-#include <stdlib.h>
-#include <string.h>
 
 char	**tokenizer(char *input, t_env *env)
 {

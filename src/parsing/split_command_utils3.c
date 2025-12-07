@@ -11,8 +11,6 @@
 /* ************************************************************************** */
 
 #include <minishell.h>
-#include <stdlib.h>
-#include <string.h>
 
 void	treat_double_quotes(t_tokenizer *tk)
 {

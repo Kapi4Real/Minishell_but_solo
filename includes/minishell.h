@@ -15,17 +15,16 @@
 
 # include <stdio.h>
 # include <stdlib.h>
+# include <string.h>
 # include <unistd.h>
 # include <signal.h>
 # include <limits.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 # include "libft.h"
-# include <sys/wait.h>    // waitpid, WEXITSTATUS
+# include <sys/wait.h>
 
 void	create_file_redir(char **tokens, int i);
-
-
 
 typedef struct s_env
 {
@@ -33,14 +32,14 @@ typedef struct s_env
 	char			*value;
 	int				last_exit_status;
 	struct s_env	*next;
-} t_env;
+}	t_env;
 
 typedef enum e_token_state
 {
 	OUTSIDE,
 	IN_DOUBLE_QUOTES,
 	IN_SINGLE_QUOTES
-} t_token_mode;
+}	t_token_mode;
 
 typedef struct s_tokenizer
 {
@@ -51,7 +50,7 @@ typedef struct s_tokenizer
 	int				pos_input;
 	int				pos_buffer;
 	int				pos_tab;
-} t_tokenizer;
+}	t_tokenizer;
 
 typedef struct s_token
 {
@@ -70,7 +69,7 @@ typedef struct s_cmd
 	int				pid;
 	int				heredoc_fd;
 	struct s_cmd	*next;
-} t_cmd;
+}	t_cmd;
 
 typedef struct s_expand_data
 {
@@ -80,7 +79,7 @@ typedef struct s_expand_data
 	t_env	*env;
 }	t_expand_data;
 
-int heredoc_redirect(t_cmd *cmd, char **tokens, int i);
+int		heredoc_redir(t_cmd *cmd, char **tokens, int i);
 t_cmd	*parse(t_token *tokens);
 char	*remove_quotes(char *token);
 t_cmd	*init_cmd(void);

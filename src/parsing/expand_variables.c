@@ -42,8 +42,8 @@ void	copy_var_value(char *result, int *j, char *value)
 
 void	expand_tokens(char **tokens, t_env *env)
 {
-	int	i;
-	char *new;
+	int		i;
+	char	*new;
 
 	i = 0;
 	while (tokens[i])

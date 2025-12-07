@@ -27,7 +27,7 @@ void	close_all_pipes(t_cmd *cmd)
 	}
 }
 
-void setup_pipe(t_cmd *current, int prev_pipe_read)
+void	setup_pipe(t_cmd *current, int prev_pipe_read)
 {
 	if (prev_pipe_read != 0 && !current->infile)
 	{
