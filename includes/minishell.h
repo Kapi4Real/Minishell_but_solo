@@ -132,7 +132,7 @@ void	free_args(char **args);
 
 void	setup_signals(void);
 void	init_shell(t_env **env, char **envp);
-void	process_command(char *command, t_env *env);
+void	manage_command(char *command, t_env *env);
 void	process_quotes(t_tokenizer *tk);
 
 int		treat_output_redirect(t_cmd *cmd, char **tokens, int i);

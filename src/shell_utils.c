@@ -12,6 +12,24 @@
 
 #include <minishell.h>
 
+static int	check_closed_quotes(const char *str)
+{
+	int	single_quote;
+	int	double_quote;
+
+	single_quote = 0;
+	double_quote = 0;
+	while (*str)
+	{
+		if (*str == '\'' && double_quote == 0)
+			single_quote = !single_quote;
+		else if (*str == '"' && single_quote == 0)
+			double_quote = !double_quote;
+		str++;
+	}
+	return (single_quote || double_quote);
+}
+
 static void	execute_command(char **args, t_env *env)
 {
 	t_cmd	*cmd;
@@ -62,11 +80,17 @@ void	init_shell(t_env **env, char **envp)
 	setup_signals();
 }
 
-void	process_command(char *command, t_env *env)
+void	manage_command(char *command, t_env *env)
 {
 	char	**args;
 	char	*expanded_command;
 
+	if (check_closed_quotes(command))
+	{
+		ft_putstr_fd("minishell: error unclosed quote\n",
+			STDERR_FILENO);
+		return ;
+	}
 	if (ft_strlen(command) > 0)
 		add_history(command);
 	expanded_command = command;

@@ -56,7 +56,7 @@ static void	run_shell_loop(t_env *env)
 			break ;
 		}
 		if (!is_only_spaces(command) && command && ft_strlen(command) > 0)
-			process_command(command, env);
+			manage_command(command, env);
 		free(command);
 	}
 }
