@@ -87,7 +87,7 @@ void	manage_command(char *command, t_env *env)
 
 	if (check_closed_quotes(command))
 	{
-		ft_putstr_fd("minishell: error unclosed quote\n",
+		ft_putstr_fd("minishell: error: unclosed quote\n",
 			STDERR_FILENO);
 		return ;
 	}

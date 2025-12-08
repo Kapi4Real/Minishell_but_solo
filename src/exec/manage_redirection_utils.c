@@ -51,22 +51,3 @@ void	setup_child_redirections(t_cmd *cmd)
 	if (cmd->outfile)
 		treat_output_child(cmd);
 }
-
-int	execute_pipeline_loop(t_cmd *cmd, t_env *env)
-{
-	t_cmd	*current;
-	int		prev_pipe_read;
-
-	current = cmd;
-	prev_pipe_read = 0;
-	while (current)
-	{
-		if (!create_pipe(current))
-			return (1);
-		if (!fork_and_execute(current, env, prev_pipe_read))
-			return (1);
-		update_pipe(current, &prev_pipe_read);
-		current = current->next;
-	}
-	return (wait_children(cmd));
-}

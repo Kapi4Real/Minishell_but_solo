@@ -27,12 +27,12 @@ void	close_all_pipes(t_cmd *cmd)
 	}
 }
 
-void	setup_pipe(t_cmd *current, int prev_pipe_read)
+void	setup_pipe(t_cmd *current, int connect_read)
 {
-	if (prev_pipe_read != 0 && !current->infile)
+	if (connect_read != 0 && !current->infile)
 	{
-		dup2(prev_pipe_read, STDIN_FILENO);
-		close(prev_pipe_read);
+		dup2(connect_read, STDIN_FILENO);
+		close(connect_read);
 	}
 	if (current->next)
 	{
@@ -55,11 +55,11 @@ int	create_pipe(t_cmd *current)
 	return (1);
 }
 
-void	execute_child_process(t_cmd *current, t_env *env, int prev_pipe_read)
+void	execute_child_process(t_cmd *current, t_env *env, int connect_read)
 {
 	int	ret;
 
-	setup_pipe(current, prev_pipe_read);
+	setup_pipe(current, connect_read);
 	execute_redirections(current);
 	if (is_builtin(current->args))
 		exit(exec_builtins(current->args, &env));

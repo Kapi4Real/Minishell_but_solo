@@ -12,7 +12,7 @@
 
 #include <minishell.h>
 
-static char	*treat_abs_path(char *cmd)
+static char	*is_accessible(char *cmd)
 {
 	int	i;
 
@@ -31,16 +31,16 @@ static char	*treat_abs_path(char *cmd)
 	return (NULL);
 }
 
-static char	*search_in_path(char *cmd, char **dirs)
+static char	*search_in_path(char *cmd, char **tab_path)
 {
 	int		i;
 	char	*temp;
 	char	*full_path;
 
 	i = 0;
-	while (dirs[i])
+	while (tab_path[i])
 	{
-		temp = ft_strjoin(dirs[i], "/");
+		temp = ft_strjoin(tab_path[i], "/");
 		full_path = ft_strjoin(temp, cmd);
 		free(temp);
 		if (access(full_path, F_OK | X_OK) == 0)
@@ -54,21 +54,21 @@ static char	*search_in_path(char *cmd, char **dirs)
 char	*get_cmd_path(char *cmd, t_env *env)
 {
 	char	*path_str;
-	char	**dirs;
+	char	**tab_path;
 	char	*result;
 
 	if (!cmd || !env)
 		return (NULL);
-	result = treat_abs_path(cmd);
+	result = is_accessible(cmd);
 	if (result != NULL)
 		return (result);
 	path_str = get_env("PATH", env);
 	if (!path_str)
 		return (NULL);
-	dirs = ft_split(path_str, ':');
-	if (!dirs)
+	tab_path = ft_split(path_str, ':');
+	if (!tab_path)
 		return (NULL);
-	result = search_in_path(cmd, dirs);
-	free_args(dirs);
+	result = search_in_path(cmd, tab_path);
+	free_args(tab_path);
 	return (result);
 }

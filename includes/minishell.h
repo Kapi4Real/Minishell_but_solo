@@ -79,6 +79,7 @@ typedef struct s_expand_data
 	t_env	*env;
 }	t_expand_data;
 
+int		skip_command(char *command);
 int		heredoc_redir(t_cmd *cmd, char **tokens, int i);
 t_cmd	*parse(t_token *tokens);
 char	*remove_quotes(char *token);

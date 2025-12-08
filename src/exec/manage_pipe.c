@@ -12,11 +12,11 @@
 
 #include "minishell.h"
 
-int	fork_and_execute(t_cmd *current, t_env *env, int prev_pipe_read)
+int	fork_and_execute(t_cmd *current, t_env *env, int connect_read)
 {
 	current->pid = fork();
 	if (current->pid == 0)
-		execute_child_process(current, env, prev_pipe_read);
+		execute_child_process(current, env, connect_read);
 	else if (current->pid < 0)
 	{
 		perror("minishell: fork");
@@ -25,17 +25,17 @@ int	fork_and_execute(t_cmd *current, t_env *env, int prev_pipe_read)
 	return (1);
 }
 
-void	update_pipe(t_cmd *current, int *prev_pipe_read)
+void	update_pipe(t_cmd *current, int *connect_read)
 {
-	if (*prev_pipe_read != 0)
-		close(*prev_pipe_read);
+	if (*connect_read != 0)
+		close(*connect_read);
 	if (current->next)
 	{
 		close(current->pipe[1]);
-		*prev_pipe_read = current->pipe[0];
+		*connect_read = current->pipe[0];
 	}
 	else
-		*prev_pipe_read = 0;
+		*connect_read = 0;
 }
 
 int	wait_children(t_cmd *cmd)
@@ -56,7 +56,7 @@ int	wait_children(t_cmd *cmd)
 	return (last_status);
 }
 
-static int	exec_cmd(t_cmd *current, t_env **env, int *prev_pipe_read)
+static int	exec_single_cmd(t_cmd *current, t_env **env, int *connect_read)
 {
 	if (current->next)
 	{
@@ -66,37 +66,38 @@ static int	exec_cmd(t_cmd *current, t_env **env, int *prev_pipe_read)
 			return (0);
 		}
 	}
-	if (!fork_and_execute(current, *env, *prev_pipe_read))
+	if (!fork_and_execute(current,
+			*env, *connect_read))
 		return (0);
-	if (*prev_pipe_read != 0)
-		close(*prev_pipe_read);
+	if (*connect_read != 0)
+		close(*connect_read);
 	if (current->next)
 	{
 		close(current->pipe[1]);
-		*prev_pipe_read = current->pipe[0];
+		*connect_read = current->pipe[0];
 	}
 	else
 	{
-		*prev_pipe_read = 0;
+		*connect_read = 0;
 	}
 	return (1);
 }
 
 int	execute_pipeline(t_cmd *cmd, t_env **env)
 {
-	int		prev_pipe_read;
+	int		connect_read;
 	t_cmd	*current;
-	int		result;
+	int		exit_status;
 
-	prev_pipe_read = 0;
+	connect_read = 0;
 	current = cmd;
 	while (current)
 	{
-		if (!exec_cmd(current, env, &prev_pipe_read))
+		if (!exec_single_cmd(current, env, &connect_read))
 			return (1);
 		current = current->next;
 	}
-	result = wait_children(cmd);
+	exit_status = wait_children(cmd);
 	close_all_pipes(cmd);
-	return (result);
+	return (exit_status);
 }

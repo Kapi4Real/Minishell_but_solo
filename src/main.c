@@ -33,23 +33,28 @@ static int	is_exit_command(char *command)
 	return (0);
 }
 
+static char	*get_command(void)
+{
+	if (isatty(STDIN_FILENO))
+		return (readline("minishell> "));
+	else
+		return (readline(""));
+}
+
 static void	run_shell_loop(t_env *env)
 {
 	char	*command;
 
 	while (1)
 	{
-		command = NULL;
-		if (isatty(STDIN_FILENO))
-			command = readline("minishell> ");
-		else
-			command = readline("");
+		command = get_command();
 		if (command == NULL)
 		{
 			printf("exit\n");
 			break ;
 		}
-		g_signal_received = 0;
+		if (skip_command(command))
+			continue ;
 		if (is_exit_command(command))
 		{
 			free(command);

@@ -12,6 +12,19 @@
 
 #include <minishell.h>
 
+static int	env_size(t_env *env)
+{
+	int	size;
+
+	size = 0;
+	while (env)
+	{
+		size++;
+		env = env->next;
+	}
+	return (size);
+}
+
 static int	env_array_loop(char **tab_env, t_env *env)
 {
 	int		i;
@@ -40,7 +53,7 @@ char	**env_to_array(t_env *env)
 	int		size;
 	char	**tab_env;
 
-	size = ft_lstsize((t_list *)env);
+	size = env_size(env);
 	tab_env = malloc(sizeof(char *) * (size + 1));
 	if (!tab_env)
 		return (NULL);

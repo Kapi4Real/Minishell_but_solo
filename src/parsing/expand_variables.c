@@ -23,7 +23,7 @@ void	copy_exit_status(char *result, int *j, t_env *env)
 		exit_status = env->last_exit_status;
 	exit_str = ft_itoa(exit_status);
 	temp = exit_str;
-	while (*temp && *j < 8190)
+	while (*temp && *j < 4000)
 		result[(*j)++] = *temp++;
 	free(exit_str);
 }

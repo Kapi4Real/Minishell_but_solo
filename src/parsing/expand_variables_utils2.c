@@ -46,7 +46,7 @@ void	copy_env_value(char *value, t_expand_data *data)
 	int	i;
 
 	i = 0;
-	while (value[i] && i < 400 && *data->j < 3500)
+	while (value[i] && i < 400 && *data->j < 4000)
 		data->result[(*data->j)++] = value[i++];
 }
 
@@ -74,7 +74,7 @@ void	treat_variable(char *input, t_expand_data *data)
 			return ;
 		}
 		value = get_env(var_name, data->env);
-		if (value && *data->j < 3500)
+		if (value && *data->j < 4000)
 			copy_env_value(value, data);
 		free(var_name);
 	}

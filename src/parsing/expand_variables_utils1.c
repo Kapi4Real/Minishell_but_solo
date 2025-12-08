@@ -37,7 +37,7 @@ char	*expand_env_vars(char *input, t_env *env)
 {
 	t_expand_data	data;
 
-	data.result = malloc(sizeof(char) * 4096);
+	data.result = calloc(4096, sizeof(char));
 	if (!data.result)
 		return (NULL);
 	data.env = env;
