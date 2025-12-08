@@ -12,7 +12,7 @@
 
 #include <minishell.h>
 
-void	copy_exit_status(char *result, int *j, t_env *env)
+void	copy_exit_status(t_expand_data *data, t_env *env)
 {
 	char	*exit_str;
 	char	*temp;
@@ -23,21 +23,19 @@ void	copy_exit_status(char *result, int *j, t_env *env)
 		exit_status = env->last_exit_status;
 	exit_str = ft_itoa(exit_status);
 	temp = exit_str;
-	while (*temp && *j < 4000)
-		result[(*j)++] = *temp++;
+	while (*temp)
+	{
+		if (*data->j >= *data->size - 1)
+			expand_buffer(data);
+		data->result[(*data->j)++] = *temp++;
+	}
 	free(exit_str);
 }
 
 void	copy_var_value(char *result, int *j, char *value)
 {
-	int	len;
-
-	len = 0;
-	while (*value && *j < 4000 && len < 500)
-	{
+	while (*value)
 		result[(*j)++] = *value++;
-		len++;
-	}
 }
 
 void	expand_tokens(char **tokens, t_env *env)

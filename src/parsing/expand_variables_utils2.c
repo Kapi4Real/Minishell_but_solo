@@ -27,18 +27,21 @@ void	detect_var(char *input, t_expand_data *data,
 		[*data->i + 1] == '$' && !in_single_quotes)
 	{
 		(*data->i)++;
-		if (*data->j < 4000)
-			data->result[(*data->j)++] = input[(*data->i)++];
+		if (*data->j >= *data->size - 1)
+			expand_buffer(data);
+		data->result[(*data->j)++] = input[(*data->i)++];
 	}
 	else if (input[*data->i] == '$' && input
 		[*data->i + 1] == '?' && !in_single_quotes)
-		process_exit(data->i, data->result, data->j, env);
+		process_exit(data->i, data, env);
 	else if (input[*data->i] == '$' && !in_single_quotes)
 		treat_variable(input, data);
-	else if (*data->j < 4000)
-		data->result[(*data->j)++] = input[(*data->i)++];
 	else
-		(*data->i)++;
+	{
+		if (*data->j >= *data->size - 1)
+			expand_buffer(data);
+		data->result[(*data->j)++] = input[(*data->i)++];
+	}
 }
 
 void	copy_env_value(char *value, t_expand_data *data)
@@ -46,13 +49,17 @@ void	copy_env_value(char *value, t_expand_data *data)
 	int	i;
 
 	i = 0;
-	while (value[i] && i < 400 && *data->j < 4000)
+	while (value[i])
+	{
+		if (*data->j >= *data->size - 1)
+			expand_buffer(data);
 		data->result[(*data->j)++] = value[i++];
+	}
 }
 
-void	process_exit(int *i, char *result, int *j, t_env *env)
+void	process_exit(size_t *i, t_expand_data *data, t_env *env)
 {
-	copy_exit_status(result, j, env);
+	copy_exit_status(data, env);
 	(*i) += 2;
 }
 
@@ -60,7 +67,7 @@ void	treat_variable(char *input, t_expand_data *data)
 {
 	char	*var_name;
 	char	*value;
-	int		old_i;
+	size_t	old_i;
 
 	var_name = NULL;
 	old_i = *data->i;
@@ -69,8 +76,9 @@ void	treat_variable(char *input, t_expand_data *data)
 		if (!var_name)
 		{
 			*data->i = old_i;
-			if (*data->j < 4000)
-				data->result[(*data->j)++] = input[(*data->i)++];
+			if (*data->j >= *data->size - 1)
+				expand_buffer(data);
+			data->result[(*data->j)++] = input[(*data->i)++];
 			return ;
 		}
 		value = get_env(var_name, data->env);

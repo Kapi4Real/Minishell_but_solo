@@ -74,8 +74,9 @@ typedef struct s_cmd
 typedef struct s_expand_data
 {
 	char	*result;
-	int		*i;
-	int		*j;
+	size_t	*i;
+	size_t	*j;
+	size_t	*size;
 	t_env	*env;
 }	t_expand_data;
 
@@ -109,8 +110,9 @@ void	handle_quotes(char c, int *in_single_quotes);
 void	detect_var(char *input, t_expand_data *data,
 			int in_single_quotes, t_env *env);
 void	copy_env_value(char *value, t_expand_data *data);
-void	process_exit(int *i, char *result, int *j, t_env *env);
+void	process_exit(size_t *i, t_expand_data *data, t_env *env);
 void	treat_variable(char *input, t_expand_data *data);
+void	expand_buffer(t_expand_data *data);
 
 int		ft_echo(char **args);
 int		ft_cd(char **args, t_env *env);
@@ -160,8 +162,9 @@ void	treat_redirection_tokens(t_tokenizer *tk);
 void	output_redir_token(t_tokenizer *tk);
 
 char	*expand_env_vars(char *input, t_env *env);
-int		take_var_name(char *input, int *pos, char **var_name);
-void	copy_exit_status(char *result, int *j, t_env *env);
+int		take_var_name(char *input, size_t *pos, char **var_name);
+void	expand_buffer(t_expand_data *data);
+void	copy_exit_status(t_expand_data *data, t_env *env);
 void	copy_var_value(char *result, int *j, char *value);
 
 char	**env_to_array(t_env *env);

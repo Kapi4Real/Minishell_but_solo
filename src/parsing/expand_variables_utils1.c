@@ -14,9 +14,9 @@
 
 static void	expand_loop(char *input, t_expand_data *data, t_env *env)
 {
-	int	i;
-	int	j;
-	int	in_single_quotes;
+	size_t	i;
+	size_t	j;
+	int		in_single_quotes;
 
 	i = 0;
 	j = 0;
@@ -28,19 +28,20 @@ static void	expand_loop(char *input, t_expand_data *data, t_env *env)
 		data->j = &j;
 		detect_var(input, data, in_single_quotes, env);
 	}
-	if (j >= 4095)
-		j = 4095;
 	data->result[j] = '\0';
 }
 
 char	*expand_env_vars(char *input, t_env *env)
 {
 	t_expand_data	data;
+	size_t			size;
 
-	data.result = calloc(4096, sizeof(char));
+	size = 1024;
+	data.result = calloc(size, sizeof(char));
 	if (!data.result)
 		return (NULL);
 	data.env = env;
+	data.size = &size;
 	expand_loop(input, &data, env);
 	return (data.result);
 }
