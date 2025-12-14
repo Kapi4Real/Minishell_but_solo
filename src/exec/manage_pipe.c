@@ -12,6 +12,9 @@
 
 #include "minishell.h"
 
+int	handle_builtin(t_cmd *current, t_env **env, int *connect_read);
+int	exec_single_cmd(t_cmd *current, t_env **env, int *connect_read);
+
 int	fork_and_execute(t_cmd *current, t_env *env, int connect_read)
 {
 	current->pid = fork();
@@ -54,33 +57,6 @@ int	wait_children(t_cmd *cmd)
 		current = current->next;
 	}
 	return (last_status);
-}
-
-static int	exec_single_cmd(t_cmd *current, t_env **env, int *connect_read)
-{
-	if (current->next)
-	{
-		if (pipe(current->pipe) == -1)
-		{
-			perror("minishell: pipe");
-			return (0);
-		}
-	}
-	if (!fork_and_execute(current,
-			*env, *connect_read))
-		return (0);
-	if (*connect_read != 0)
-		close(*connect_read);
-	if (current->next)
-	{
-		close(current->pipe[1]);
-		*connect_read = current->pipe[0];
-	}
-	else
-	{
-		*connect_read = 0;
-	}
-	return (1);
 }
 
 int	execute_pipeline(t_cmd *cmd, t_env **env)

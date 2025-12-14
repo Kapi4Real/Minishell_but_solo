@@ -106,7 +106,7 @@ int		create_pipe(t_cmd *current);
 void	restore_fd(int saved_stdin, int saved_stdout);
 void	execute_child_process(t_cmd *current, t_env *env, int prev_pipe_read);
 
-void	handle_quotes(char c, int *in_single_quotes);
+void	handle_quotes(char c, int *in_single_quotes, int *in_double_quotes);
 void	detect_var(char *input, t_expand_data *data,
 			int in_single_quotes, t_env *env);
 void	copy_env_value(char *value, t_expand_data *data);
