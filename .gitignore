@@ -1,0 +1,13 @@
+# Build artifacts
+*.o
+minishell
+
+# Swap files
+*.swp
+*.swo
+
+# Test files
+test1
+test2
+test3
+testfile
