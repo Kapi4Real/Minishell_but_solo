@@ -7,7 +7,6 @@ SRC = src/main.c \
       src/shell_utils.c \
       src/signals.c \
       src/parsing/split_command_tokenizer.c \
-      src/parsing/tokenizer_quotes.c \
       src/parsing/create_token.c \
       src/parsing/split_command_utils2.c \
       src/parsing/split_command_utils3.c \
@@ -38,7 +37,6 @@ SRC = src/main.c \
       src/parsing/parser_redirections.c \
       src/exec/manage_redirection.c \
       src/exec/manage_pipe.c \
-      src/exec/manage_pipe_exec.c \
         src/parsing/parser_main_utils.c \
     	src/parsing/heredoc.c \
 
