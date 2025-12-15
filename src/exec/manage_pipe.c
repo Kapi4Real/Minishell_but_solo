@@ -77,20 +77,9 @@ static int	exec_single_cmd(t_cmd *current, t_env **env, int *connect_read)
 			return (0);
 		}
 	}
-	if (!fork_and_execute(current,
-			*env, *connect_read))
+	if (!fork_and_execute(current, *env, *connect_read))
 		return (0);
-	if (*connect_read != 0)
-		close(*connect_read);
-	if (current->next)
-	{
-		close(current->pipe[1]);
-		*connect_read = current->pipe[0];
-	}
-	else
-	{
-		*connect_read = 0;
-	}
+	update_pipe(current, connect_read);
 	return (1);
 }
 

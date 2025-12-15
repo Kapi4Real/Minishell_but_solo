@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   create_token.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ccouton <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: ccouton <marvin@42.fr>                      +#+  +:+       +#+       */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/29 00:00:00 by ccouton           #+#    #+#             */
 /*   Updated: 2025/06/29 00:00:00 by ccouton          ###   ########.fr       */
