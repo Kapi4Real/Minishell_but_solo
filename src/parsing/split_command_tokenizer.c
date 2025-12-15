@@ -12,6 +12,31 @@
 
 #include <minishell.h>
 
+void	expand_and_quotes(char **tab, t_env *env)
+{
+	int		i;
+	char	*expanded;
+	char	*no_quotes;
+
+	i = 0;
+	while (tab[i])
+	{
+		expanded = expand_env_vars(tab[i], env);
+		if (expanded)
+		{
+			free(tab[i]);
+			tab[i] = expanded;
+		}
+		no_quotes = remove_quotes(tab[i]);
+		if (no_quotes)
+		{
+			free(tab[i]);
+			tab[i] = no_quotes;
+		}
+		i++;
+	}
+}
+
 char	**tokenizer(char *input, t_env *env)
 {
 	t_tokenizer	tk;
@@ -26,7 +51,7 @@ char	**tokenizer(char *input, t_env *env)
 	}
 	create_token(&tk);
 	tk.tab[tk.pos_tab] = NULL;
-	expand_tokens(tk.tab, env);
+	expand_and_quotes(tk.tab, env);
 	free(tk.buffer);
 	return (tk.tab);
 }

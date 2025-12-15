@@ -39,7 +39,7 @@ char	*expand_env_vars(char *input, t_env *env)
 	size_t			size;
 
 	size = 1024;
-	data.result = calloc(size, sizeof(char));
+	data.result = ft_calloc(size, sizeof(char));
 	if (!data.result)
 		return (NULL);
 	data.env = env;

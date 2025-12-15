@@ -24,10 +24,11 @@ static int	check_exit_args(char **args, int *exit_code)
 			ft_putstr_fd("minishell: exit: too many arguments\n", 2);
 			return (1);
 		}
-		is_numeric = ft_isdigit_str(args[1]);
+		is_numeric = (args[1][0] == '-' && ft_isdigit_str
+				(args[1] + 1)) || ft_isdigit_str(args[1]);
 		if (!is_numeric)
 		{
-			ft_putstr_fd("minishell: exit: numeric argument required\n", 2);
+			ft_putstr_fd("minishell: exit: not numeric\n", 2);
 			*exit_code = 2;
 		}
 		else
