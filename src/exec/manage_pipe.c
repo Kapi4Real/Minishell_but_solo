@@ -58,7 +58,8 @@ int	wait_children(t_cmd *cmd)
 
 static int	exec_single_cmd(t_cmd *current, t_env **env, int *connect_read)
 {
-	if (is_builtin(current->args) && !current->next)
+	if (is_builtin(current->args) && !current->next
+		&& !current->infile && !current->outfile && current->heredoc_fd < 0)
 	{
 		if (*connect_read != 0)
 		{
@@ -66,7 +67,6 @@ static int	exec_single_cmd(t_cmd *current, t_env **env, int *connect_read)
 			close(*connect_read);
 			*connect_read = 0;
 		}
-		execute_redirections(current);
 		return (exec_builtins(current->args, env));
 	}
 	if (current->next)
