@@ -12,9 +12,13 @@
 
 #include <minishell.h>
 
-void	handle_quotes(char c, int *in_single_quotes)
+void	handle_quotes(char c, int *in_single_quotes, int *in_double_quotes)
 {
-	if (c == '\'' && !*in_single_quotes)
+	if (c == '"' && !*in_single_quotes && !*in_double_quotes)
+		*in_double_quotes = 1;
+	else if (c == '"' && *in_double_quotes)
+		*in_double_quotes = 0;
+	else if (c == '\'' && !*in_single_quotes && !*in_double_quotes)
 		*in_single_quotes = 1;
 	else if (c == '\'' && *in_single_quotes)
 		*in_single_quotes = 0;

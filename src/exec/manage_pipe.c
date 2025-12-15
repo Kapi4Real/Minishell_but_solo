@@ -58,6 +58,17 @@ int	wait_children(t_cmd *cmd)
 
 static int	exec_single_cmd(t_cmd *current, t_env **env, int *connect_read)
 {
+	if (is_builtin(current->args) && !current->next)
+	{
+		if (*connect_read != 0)
+		{
+			dup2(*connect_read, 0);
+			close(*connect_read);
+			*connect_read = 0;
+		}
+		execute_redirections(current);
+		return (exec_builtins(current->args, env));
+	}
 	if (current->next)
 	{
 		if (pipe(current->pipe) == -1)

@@ -36,12 +36,12 @@ void	detect_quotes(t_tokenizer *tk)
 	if (tk->input[tk->pos_input] == '"')
 	{
 		tk->mode = IN_DOUBLE_QUOTES;
-		tk->pos_input++;
+		tk->buffer[tk->pos_buffer++] = tk->input[tk->pos_input++];
 	}
 	else if (tk->input[tk->pos_input] == '\'')
 	{
 		tk->mode = IN_SINGLE_QUOTES;
-		tk->pos_input++;
+		tk->buffer[tk->pos_buffer++] = tk->input[tk->pos_input++];
 	}
 }
 
